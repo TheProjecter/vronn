@@ -139,3 +139,4 @@ entrainement
   [|[|fun x -> x|]|]
   0.5
 ;;
+(* ce qui ne marche pas... *)
