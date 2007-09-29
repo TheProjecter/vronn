@@ -111,11 +111,7 @@ let sensib sortie_desiree tab_sorties f_point_matrix tab_poids=
 
 let mAJ tab_poids tab_sensib tab_sorties eta=
 	for i=0 to Array.length tab_poids -1 do
-		printf "tab mAJ taille avant: %d" (Array.length tab_poids.(i));
-		printf " sur %d\n" (Array.length tab_poids.(i).(0) );
 		tab_poids.(i) <- tab_poids.(i) -- (transpo (apply (fun x -> (0. -. eta) *. x) (multiply tab_sensib.(i) (transpo tab_sorties.(i+1)))));
-		printf "mAJ apres: %d" (Array.length tab_poids.(i));
-		printf " sur %d\n" (Array.length tab_poids.(i).(0) )
 		done
 	;;
 
