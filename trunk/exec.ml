@@ -33,12 +33,10 @@ testres et [|1.;1.|];;
 et;;
 
 let xor = randW [2;1] 2 funlog;;
-for i=0 to 10 do
+for i=0 to 4 do
 training xor [|[|1.;1.|],[|0.|];[|1.;0.|],[|1.|];[|0.;1.|],[|1.|];[|0.;0.|],[|0.|]|] 5. 0.005
 done;;
-testres xor [|1.;1.|];;
-testres xor [|1.;0.|];;
-testres xor [|0.;1.|];;
+Printf.printf "1,1 : %f\n1,0 : %f\n0,1 : %f\n\n" (testres xor [|1.;1.|]).(0) (testres xor [|1.;0.|]).(0) (testres xor [|0.;1.|]).(0);;
 xor;;
 
 let compare = randW [1] 2 funlog;;
@@ -52,3 +50,12 @@ training compare mat 0.5 0.005;;
 testres compare [|501.;500.|];;
 compare;;
 
+let plus = randW [1] 2 ident;;
+let mat2=Array.make 100 ([|0.;0.|],[|0.|]);;
+for i=0 to 99 do
+  let j=float_of_int (Random.int 500) and k=float_of_int (Random.int 500) in
+    mat2.(i)<-[|j;k|],[|j+.k|]
+done;;
+training plus mat2 0.5 0.005;;
+testres plus [|63.;84.|];;
+plus;;
