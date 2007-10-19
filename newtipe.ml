@@ -3,6 +3,7 @@ exception Pas_bonne_taille_plus;;
 exception Pas_bonne_taille_moins;;
 exception Erreur;;
 exception Pas_carree;;
+exception Pb_dans_la_def;;
 open Printf;;
 (*   syntaxe : printf "Erreur: %s\n" s    *)
 
@@ -81,38 +82,46 @@ let propagation entree tab_poids f=
 	;;
 
 
-let gradfpoint f_point_matrix n_k= 
-
+let gradfpoint f_point_matrix n_k:(float array array)=
+  Printf.printf "n_k, %d; fpointmachin, %d\n\n" (Array.length n_k) (Array.length f_point_matrix);
 	let n=Array.length f_point_matrix in
-	if Array.length f_point_matrix.(0) <> n 
+ 	if Array.length f_point_matrix.(0) <> n 
 		then raise Pas_carree
-		else let res=Array.make_matrix n 1 0. in
+		else 
+		if Array.length n_k <> n then raise Pb_dans_la_def else
+		let res=Array.make_matrix n 1 0. in
 			for i=0 to n-1 do res.(i).(0) <- f_point_matrix.(i).(i) n_k.(i).(0) done;
 			res
 ;;
 
-let sensib sortie_desiree tab_sorties f_point_matrix tab_poids=
+(*let sensib sortie_desiree tab_sorties f_point_matrix tab_poids=
 	let m=Array.length tab_poids in	 
 	let erreur= (--) sortie_desiree tab_sorties.(m) (*derniere sortie dun tableau de m+1 cases*) in
 	let tmp= multiply (gradfpoint f_point_matrix tab_sorties.(m-1)) erreur in
 	let s_M=apply (fun x-> ( -2. ) *. x ) tmp in
 	let tab_sensib= Array.make m s_M in
-	for i=1 to (m-1) do
-		printf "tab_sensib taille avant: %d" (Array.length tab_sensib.(m-1-i));
-		printf " sur %d\n" (Array.length tab_sensib.(m-1-i).(0) );	
+	for i=1 to (m-1) do	
 		tab_sensib.(m-1-i) <- multiply ( multiply (gradfpoint f_point_matrix tab_sorties.(m-i+1) ) (transpo tab_poids.(m-i) ) ) tab_sensib.(m-i);
-		printf "tab_sensib apres: %d" (Array.length tab_sensib.(m-1-i));
-		printf " sur %d\n" (Array.length tab_sensib.(m-1-i).(0) )
+		done;
+	tab_sensib
+	;;*)
+
+let sensib sortie_desiree (tab_sorties:(float array array array)) f_point_matrix tab_poids=
+	let m=Array.length tab_poids in	 
+	let erreur= (--) sortie_desiree tab_sorties.(m) (*derniere sortie dun tableau de m+1 cases*) in
+	let tmp= multiply (gradfpoint f_point_matrix.(m-1) tab_sorties.(m)) erreur in
+	let s_M=apply (fun x-> (* -2. *. *) x ) tmp in
+	let tab_sensib= Array.make m s_M in
+	for i=1 to (m-1) do	
+		tab_sensib.(m-1-i) <- multiply ( multiply (gradfpoint f_point_matrix.(m-i-1) tab_sorties.(m-i) ) (transpo tab_poids.(m-i-1) ) ) tab_sensib.(m-i);
 		done;
 	tab_sensib
 	;;
 
-
-
 let mAJ tab_poids tab_sensib tab_sorties eta=
 	for i=0 to Array.length tab_poids -1 do
-		tab_poids.(i) <- tab_poids.(i) -- (transpo (apply (fun x -> (0. -. eta) *. x) (multiply tab_sensib.(i) (transpo tab_sorties.(i+1)))));
-		done
+		tab_poids.(i) <- tab_poids.(i) -- (apply (fun x -> (0. -. eta) *. x) (multiply tab_sensib.(i) (transpo tab_sorties.(i))));
+  done
 	;;
 
 
@@ -138,25 +147,29 @@ let entrainement tab_poids tab_couple f f_point_matrix eta=
 !!! la taille de f_point_matrix depend de la couche sur laquelle elle est utilisee car elle est appliquée au vecteur denntree de dimension le nombre de neurone de la couche precedente   donc il faudra lutlier sous forme de tableau de f_point_matrix avec les dim requises*)
 
 
-let ou = [|[|[|0.2;0.3|]|]|];;
+let et = [|[|[|-0.30;0.43|]|]|];;
+for i=0 to 10 do
 entrainement 
-  ou  
+  et  
   ([| ( [|[|0.|];[|1.|]|], [|[|0.|]|] );( [|[|1.|];[|1.|]|], [|[|1.|]|] );( [|[|0.|];[|0.|]|], [|[|0.|]|] );( [|[|1.|];[|0.|]|], [|[|0.|]|] );|])
   (fun x->if x>0.5 then 1. else 0.)
-  [|[|(fun x -> x); (fun _ -> 0.)|];[|(fun _ -> 0.) ;(fun x->x)|]|]
-  0.5
+  [|[|[|fun x->1.|]|]|]
+  0.1
+done
 ;;
-ou;;
+et;;
+propagation [|[|1.|];[|1.|]|] et (fun x->x);;
 
-let plus = [|[|[|0.2;0.3|];[|0.5;0.4|]|];[|[|1.;0.5|]|]|];;
-entrainement 
-  plus  
-  ([| ( [|[|4.|];[|1.|]|], [|[|5.|]|] );( [|[|1.|];[|1.|]|], [|[|2.|]|] );( [|[|3.|];[|2.|]|], [|[|5.|]|] );( [|[|1.|];[|8.|]|], [|[|9.|]|] );|])
+let xor = [|[|[|-0.6;0.7|];[|0.3;0.4|]|];[|[|0.2;0.5|]|]|];;
+entrainement
+  xor
+  ([| ( [|[|0.|];[|1.|]|], [|[|1.|]|] );( [|[|1.|];[|1.|]|], [|[|0.|]|] );( [|[|0.|];[|0.|]|], [|[|0.|]|] );( [|[|1.|];[|0.|]|], [|[|1.|]|] );|])
   (fun x->if x>0.5 then 1. else 0.)
-  [|[|(fun x -> x); (fun _ -> 0.)|];[|(fun _ -> 0.) ;(fun x->x)|]|]
-  0.01
+  [|[|[|(fun x->1.);(fun x->0.)|];[|(fun x->0.);(fun x->1.)|]|];[|[|(fun x->1.)|]|]|]
+  0.3
 ;;
-plus;;
 
-propagation [|[|4.|];[|6.|]|] plus (fun x->x);;
-plus;;
+#trace propagation;;
+#trace multiply;;
+#trace sensib;;
+#trace gradfpoint;;
