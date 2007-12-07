@@ -1,5 +1,5 @@
 opt: BinaryFileParse.cmxa
-	ocamlopt.opt -rectypes BinaryFileParse.cmxa bigarray.cmxa -I +site-lib/fftw2 fftw2.cmxa -cclib -lfftw -cclib -lrfftw -cclib -lm fft.ml -I +camlimages ci_core.cmxa graphics.cmxa ci_graphics.cmxa ci_png.cmxa affichage.ml ajourbiais.ml dodolala.ml -o run/dodolala
+	ocamlopt.opt -rectypes BinaryFileParse.cmxa bigarray.cmxa -I +site-lib/fftw2 fftw2.cmxa -cclib -lfftw -cclib -lrfftw -cclib -lm fft.ml -I +camlimages ci_core.cmxa graphics.cmxa ci_graphics.cmxa ci_png.cmxa affichage.ml ajourbiais.ml alphabet.ml -o run/alphabet
 
 BinaryFileParse.cmx:
 	ocamlopt.opt -rectypes -c BinaryFileParse.ml -o BinaryFileParse.cmx
@@ -14,4 +14,7 @@ fft.ml: BinaryFileParse.cmxa
 	ocamlopt.opt -rectypes BinaryFileParse.cmxa bigarray.cmxa -I +site-lib/fftw2 fftw2.cmxa -cclib -lfftw -cclib -lrfftw -cclib -lm fft.ml -I +camlimages ci_core.cmxa graphics.cmxa ci_graphics.cmxa ci_png.cmxa affichage.ml ajourbiais.ml $@ -o run/$*
 
 clean:
-	rm -f *.o *.cm* *~ *.a 
+	rm -f *.o *.cm* *~ run/* *.a
+
+test:
+	rm -f *.o [^B]*.cm* *~ *.a
