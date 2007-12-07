@@ -1,6 +1,6 @@
 
-let queue_a = Fft2.main "/a/tipe/alphabet/a.wav";;
-let queue_b = Fft2.main "/a/tipe/alphabet/b.wav";;
+let queue_a = Fft.main "/root/localWork/tipe/alphabet/a.wav";;
+let queue_b = Fft.main "/root/localWork/tipe/alphabet/b.wav";;
 let lgr_a = Queue.length queue_a and lgr_b = Queue.length queue_b;;
 let lgr = lgr_a + lgr_b;;
 
