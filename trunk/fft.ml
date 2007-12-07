@@ -83,7 +83,7 @@ let transformée_de_fourier fichier=
 		let bigarray = fft (Queue.take queue_des_echantillons) in
 		let simplearray = Array.make (Bigarray.Array1.dim bigarray) 0. in
 		for j=0 to Array.length simplearray -1 do
-			simplearray.(j) <- (Bigarray.Array1.get bigarray j).Complex.re
+			simplearray.(j) <- (Bigarray.Array1.get bigarray j).Complex.re /. 8800000.
 		done;
 		Queue.add simplearray queue_des_coefficients 
 	done;
