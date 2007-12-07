@@ -1,3 +1,5 @@
+Random.init (int_of_float (Unix.time ()));;
+
 type neurone=
 		{poids: float array; mutable activation:float; mutable sortie:float;mutable sensib: float};;
 type reseau=neurone array array;;
@@ -211,7 +213,7 @@ let go_on=ref true in
 let l1,l2=ref [],ref [] in
 Sys.catch_break true;
 try
-while !go_on && (*!i<= 1000000 &&*)  !last_erreur > 0.001(*ceci est la borne sup des erreurs acceptées*) && !i < 60 do
+while !go_on && (*!i<= 1000000 &&*)  !last_erreur > 0.001(*ceci est la borne sup des erreurs acceptées*) && !i < nb_test_max do
 	(*Printf.printf "%f\n" (!mistake);*)
 	entrainement res tab_couples !pas (10000) sigmoide;
 	mistake := super_erreur res tab_couples;
@@ -230,6 +232,40 @@ with Sys.Break -> Printf.printf "au bout de: %d\n" (!i*3000);
 (!l1,!l2)
 ;;
 
+
+let super_train_log_eta (res:reseau) tab_couples eta nb_test_max sigmoide=(*pseudo logarithmique, sert juste a mieux visualiser la pente initiale*)
+let pas=ref eta in
+let mistake=ref 1. in
+let last_erreur=ref 1. in
+let i=ref 0 in
+let go_on=ref true in
+let l1,l2=ref [],ref [] in
+let saut=10000 in
+Sys.catch_break true;
+try
+while !go_on && (*!i<= 1000000 &&*)  !last_erreur > 0.001(*ceci est la borne sup des erreurs acceptées*) && !i < nb_test_max do
+	Printf.printf "%f\n" (!mistake);
+	entrainement res tab_couples !pas (saut) sigmoide;
+	mistake := super_erreur res tab_couples;
+	(match !i mod 4 with 0->Printf.printf "-" |1->Printf.printf "\\" | 2->Printf.printf "|" | _->Printf.printf "/" );
+	l1:=(!i)::(!l1);
+	l2:=( !mistake)::(!l2);
+	(*if abs (!mistake -. !last_erreur) <0.0000001 then anti_poids_nul res;*)
+	(*go_on := abs (!mistake -. !last_erreur) >0.00001;(* si plus de modif arrete toi*)*)
+	if abs (!mistake -. !last_erreur) < 0.0001 then pas := !pas *. 0.99 else pas := 1.01*. !pas;
+	Printf.printf "le pas est %f\n" !pas;
+	incr i;
+	last_erreur := super_erreur res tab_couples;
+	flush stdout;
+done;
+	Printf.printf "au bout de: %d\n" (!i*saut);
+	if !i=nb_test_max then Printf.printf "raison d'arret : nb_test_max (%d) atteint\n" (nb_test_max*saut)  else Printf.printf "raison d'arret: critère de boucle rempli\n";
+	(!l1,!l2)
+with Sys.Break -> Printf.printf "au bout de: %d\n" (!i*saut);
+(!l1,!l2)
+;;
+
+
 let save_struct (reseau:reseau) file=(*attention ne sauvagrde que des valeurs approchées des poids*)
 	let fichier=open_out file in
 	Printf.fprintf fichier (*taille du reseau*) "%d\n" (Array.length reseau);
@@ -238,7 +274,7 @@ let save_struct (reseau:reseau) file=(*attention ne sauvagrde que des valeurs ap
 			for neur=0 to Array.length reseau.(couche) -1 do
 				Printf.fprintf fichier (*taille des entrees des neurones*) "%d\n" (Array.length reseau.(couche).(neur).poids) ;
 				for weight=0 to Array.length reseau.(couche).(neur).poids  -1 do
-					Printf.fprintf fichier "%f\n" reseau.(couche).(neur).poids.(weight)
+					Printf.fprintf fichier "%.20f\n" reseau.(couche).(neur).poids.(weight)
 				done
 			done
 		done;

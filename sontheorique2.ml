@@ -21,7 +21,7 @@ let tab_couples=[|
 Printf.printf "Le Son theorqiue \n\n";;
 
 
-let tmp=super_train_log res  tab_couples 0.5 30 sigmoide;;
+let tmp=super_train_log_eta res  tab_couples 0.5 30 sigmoide;;
 let (_,l2) = tmp in
 affiche "resultsonth2" (List.rev l2);;
 
