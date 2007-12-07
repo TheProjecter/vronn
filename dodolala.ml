@@ -1,4 +1,4 @@
-let queue = Fft2.main "dodolala.wav";;
+let queue = Fft.main "dodolala.wav";;
 
 open Ajourbiais
 open Affichage
