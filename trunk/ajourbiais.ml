@@ -225,7 +225,7 @@ let l1,l2=ref [],ref [] in
 Sys.catch_break true;
 try
 while !go_on && (*!i<= 1000000 &&*) !last_erreur > 0.001(*ceci est la borne sup
-des erreurs acceptées*) && !i < (nb_test_max /10) do
+des erreurs acceptées*) && !i < nb_test_max do
 	(*Printf.printf "%f\n" (!mistake);*)
 	entrainement res tab_couples !pas (10000) sigmoide;
 	mistake := super_erreur res tab_couples;
