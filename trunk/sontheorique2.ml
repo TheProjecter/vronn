@@ -18,7 +18,7 @@ let tab_couples=[|
 |];;
 
 
-Printf.printf "Le Son theorqiue \n\n";;
+Printf.printf "Le son theorique \n\n";;
 
 
 let tmp=super_train_log_eta res  tab_couples 0.5 30 sigmoide;;
@@ -26,8 +26,8 @@ let (_,l2) = tmp in
 affiche "resultsonth2" (List.rev l2);;
 
 test res tab_couples;;
-Printf.printf "Erreur %f\n\n" (erreur res tab_couples);;
-save_struct res "struct_sontheorique2";;
+Printf.printf "Erreur : %f\n" (erreur res tab_couples);;
 let res2=load_struct "struct_sontheorique2" in
-(*test res2 tab_couples;;*)
-Printf.printf "Erreur de la sauvegarde %f\n\n" (erreur res2 tab_couples);;
+let _=test res2 tab_couples in
+Printf.printf "Erreur de la sauvegarde : %f\n\n" (erreur res2 tab_couples);;
+save_struct res "struct_sontheorique2";;
