@@ -1,4 +1,14 @@
+let monitor_gc ()=
+  print_endline "major GC cycle...";
+  Gc.print_stat stdout;
+  print_endline ""
+;;
+
 Gc.set {(Gc.get()) with Gc.minor_heap_size=20000000};;
+Gc.set {(Gc.get()) with Gc.verbose=0x2DF};;
+Gc.set {(Gc.get()) with Gc.verbose=0x200};;
+
+(*Gc.create_alarm (monitor_gc);;*)
 
 Random.init (int_of_float (Unix.time ()));;
 
@@ -6,7 +16,6 @@ type neurone=
 		{poids: float array; mutable activation:float; mutable sortie:float;mutable sensib: float};;
 type reseau=neurone array array;;
 
-let t=ref 0.;;
 let scan_int () = Scanf.scanf " %d" (fun x -> x);;
 let sigmoide =fun x->1./. (1. +.exp (-.x));;
 let dsigm= fun x->  exp (-.x) /. (1. +.  exp (-.x)) **2.;;
@@ -14,23 +23,20 @@ let dsigm= fun x->  exp (-.x) /. (1. +.  exp (-.x)) **2.;;
 let propagation entree (res:reseau) sigmoide=
 	let m=Array.length res in
 	for neur=0 to Array.length res.(0) -1 do
-                t:=0.;
+		res.(0).(neur).activation <- 0.;
 		for i=0 to Array.length entree -1 do
-			t:=!t +. (res.(0).(neur).poids.(i) *. entree.(i));
+			res.(0).(neur).activation <- res.(0).(neur).activation +. (res.(0).(neur).poids.(i) *. entree.(i));
 		done;
-		res.(0).(neur).activation <- !t -. res.(0).(neur).poids.(Array.length entree); (* rajout du biais dans la premiere couche *)
+		res.(0).(neur).activation <- res.(0).(neur).activation -. res.(0).(neur).poids.(Array.length entree); (* rajout du biais dans la premiere couche *)
 		res.(0).(neur).sortie <- sigmoide res.(0).(neur).activation
 	done;
 	for couche=1 to m-1 do
 		for neur=0 to Array.length res.(couche) -1 do
-                        t:=0.;
-                        let couche_moins_un=couche-1 in
-			for i=0 to Array.length res.(couche_moins_un) -1 do
-				t:=!t+. (res.(couche).(neur).poids.(i) *.
-                                res.(couche_moins_un).(i).sortie);
+			res.(couche).(neur).activation <- 0.;
+			for i=0 to Array.length res.(couche -1)-1 do
+				res.(couche).(neur).activation <- res.(couche).(neur).activation +. (res.(couche).(neur).poids.(i) *. res.(couche-1).(i).sortie);
 			done;
-			res.(couche).(neur).activation <- !t -.
-                          res.(couche).(neur).poids.(Array.length res.(couche_moins_un))  ;(*rajout du biais dans la couche*)
+			res.(couche).(neur).activation <- res.(couche).(neur).activation -. res.(couche).(neur).poids.(Array.length res.(couche-1))  ;(*rajout du biais dans la couche*)
 			res.(couche).(neur).sortie <- sigmoide res.(couche).(neur).activation
 		done
 	done
@@ -48,34 +54,29 @@ let calcul_sensib (res:reseau) entree sortie eta=
   (*calcul de base*)
   let m=Array.length res in
   for neur=0 to Array.length res.(m-1) -1 do 
-    res.(m-1).(neur).sensib <- (dsigm res.(m-1).(neur).activation) *. (sortie.(neur) -. res.(m-1).(neur).sortie)
+    res.(m-1).(neur).sensib <- (dsigm res.(m-1).(neur).activation)  *. (sortie.(neur) -. res.(m-1).(neur).sortie)
   done;
   (*calcul recursif*)
   let couche=ref (m-2) and somme=ref 0. in
   while !couche>=0 do
     for neur=0 to Array.length res.(!couche) -1 do
       somme:=0.;
-      let couche_plus_un= !couche+1 in
-      for k=0 to Array.length res.(couche_plus_un) -1 do
-        somme := !somme +. (res.(couche_plus_un).(k).sensib *. res.(couche_plus_un).(k).poids.(neur))
+      for k=0 to Array.length res.(!couche +1) -1 do
+        somme := !somme +. (res.(!couche+1).(k).sensib *. res.(!couche+1).(k).poids.(neur))
       done;
       res.(!couche).(neur).sensib <- (dsigm res.(!couche).(neur).activation) *. !somme;
-      for k=0 to Array.length res.(couche_plus_un) -1 do (* modifie les poids de la couche*)
-        let t=eta *. res.(couche_plus_un).(k).sensib in
-        res.(couche_plus_un).(k).poids.(neur) <-
-          res.(couche_plus_un).(k).poids.(neur) +. (t *. res.(!couche).(neur).sortie);
-        res.(couche_plus_un).(k).poids.(Array.length res.(!couche)) <-
-          res.(couche_plus_un).(k).poids.(Array.length res.(!couche)) -. t (*mise a jour du biais qui ne depend que de la sensib*);
+      for k=0 to Array.length res.(!couche+1) -1 do (* modifie les poids de la couche*)
+        res.(!couche+1).(k).poids.(neur) <- res.(!couche+1).(k).poids.(neur) +. (eta *. res.(!couche+1).(k).sensib *. res.(!couche).(neur).sortie);
+        res.(!couche+1).(k).poids.(Array.length res.(!couche)) <- res.(!couche+1).(k).poids.(Array.length res.(!couche)) -. (eta *. res.(!couche+1).(k).sensib) (*mise a jour du biais qui ne depend que de la sensib*);
       done;
     done;
     decr couche
   done;
   (*on modifie la premiere couche;  !couche=-1*)
   for input=0 to Array.length entree-1 do
-    for k=0 to Array.length res.(0) -1 do
-      let t=eta *. res.(0).(k).sensib in
-      res.(0).(k).poids.(input) <- res.(0).(k).poids.(input) +. (t *. entree.(input) );
-      res.(0).(k).poids.(Array.length entree) <-res.(0).(k).poids.(Array.length entree) -. t (*mise a jour du biais qui ne depend que de la sensib*);
+    for k=0 to Array.length res.(!couche+1) -1 do
+      res.(!couche+1).(k).poids.(input) <- res.(!couche+1).(k).poids.(input) +. (eta *. res.(!couche+1).(k).sensib *. entree.(input) );
+      res.(!couche+1).(k).poids.(Array.length entree) <-res.(!couche+1).(k).poids.(Array.length entree) -. (eta *. res.(!couche+1).(k).sensib) (*mise a jour du biais qui ne depend que de la sensib*);
     done;
   done
 ;;

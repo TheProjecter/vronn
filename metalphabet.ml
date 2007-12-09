@@ -1,8 +1,8 @@
 let bob=Array.make_matrix 15 15 0.;;
 
-let queue_a = Fft.main "/a/tipe/alphabet/a.wav";;
-let queue_b = Fft.main "/a/tipe/alphabet/b.wav";;
-let queue_c = Fft.main "/a/tipe/alphabet/c.wav";;
+let queue_a = Fft.main "../alphabet/a.wav";;
+let queue_b = Fft.main "../alphabet/b.wav";;
+let queue_c = Fft.main "../alphabet/c.wav";;
 let lgr_a = Queue.length queue_a and lgr_b = Queue.length queue_b and lgr_c=Queue.length queue_c;;
 let lgr = lgr_a + lgr_b + lgr_c;;
 
@@ -28,8 +28,8 @@ for i=1 to 15 do
     let _,l2 = super_train_log res  tab_couples 0.5 200 sigmoide in
     bob.(i-1).(j-1) <- super_erreur res tab_couples ;
     Printf.printf " --------------- WHEEEE ! %d, %d done -------------- \n\n\n" i j;
-    Affichage.affiche ("results/alphabet" ^ (string_of_int i) ^","^ (string_of_int j)) (List.rev l2);
-		save_struct res ("results/alphabet" ^ (string_of_int i) ^","^ (string_of_int j) ^"_struct")
+    Affichage.affiche ("../results/alphabet" ^ (string_of_int i) ^","^ (string_of_int j)) (List.rev l2);
+		save_struct res ("../results/alphabet" ^ (string_of_int i) ^","^ (string_of_int j) ^"_struct")
   done
 done;;
 

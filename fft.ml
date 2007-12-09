@@ -80,13 +80,13 @@ let transformée_de_fourier fichier=
   let fft=Fftw2.create Fftw2.backward echantillons_par_dt in
   let queue_des_coefficients=Queue.create () in 
   for i=0 to paquets_d'echantillons-1 do
-		let bigarray = fft (Queue.take queue_des_echantillons) in
-		let simplearray = Array.make (Bigarray.Array1.dim bigarray) 0. in
-		for j=0 to Array.length simplearray -1 do
-			simplearray.(j) <- (Bigarray.Array1.get bigarray j).Complex.re /. 8800000.
-		done;
-		Queue.add simplearray queue_des_coefficients 
-	done;
+    let bigarray = fft (Queue.take queue_des_echantillons) in
+    let simplearray = Array.make (Bigarray.Array1.dim bigarray) 0. in
+    for j=0 to Array.length simplearray -1 do
+      simplearray.(j) <- (Bigarray.Array1.get bigarray j).Complex.re /. 8800000.
+    done;
+    Queue.add simplearray queue_des_coefficients 
+  done;
   queue_des_coefficients
 
 let main=transformée_de_fourier
