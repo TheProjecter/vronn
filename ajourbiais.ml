@@ -9,7 +9,10 @@ type reseau=neurone array array;;
 let t=ref 0.;;
 let scan_int () = Scanf.scanf " %d" (fun x -> x);;
 let sigmoide =fun x->1./. (1. +.exp (-.x));;
-let dsigm= fun x->  exp (-.x) /. (1. +.  exp (-.x)) **2.;;
+let dsigm x=
+  let exp_moins_x=exp (-.x) in
+    exp_moins_x /. (1. +. exp_moins_x) ** 2.
+;;
 
 let propagation entree (res:reseau) sigmoide=
 	let m=Array.length res in
