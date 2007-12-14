@@ -75,18 +75,28 @@ let création_des_echantillons fichier=
   done in
   echantillons_par_dt,nombre_de_canaux,paquets_d'echantillons,queue_des_echantillons
 
+let vente_au_détail queue déb fin=
+ let nouvelle_queue=Queue.create () in
+ for i=0 to déb-1 do
+   Queue.peek queue;
+ done;
+ for i=déb to fin do
+   Queue.add (Queue.peek queue) nouvelle_queue
+ done;
+ nouvelle_queue
+
 let transformée_de_fourier fichier=
   let echantillons_par_dt,nombre_de_canaux,paquets_d'echantillons,queue_des_echantillons=création_des_echantillons fichier in
   let fft=Fftw2.create Fftw2.backward echantillons_par_dt in
   let queue_des_coefficients=Queue.create () in 
-  for i=0 to paquets_d'echantillons-1 do
-    let bigarray = fft (Queue.take queue_des_echantillons) in
-    let simplearray = Array.make (Bigarray.Array1.dim bigarray) 0. in
-    for j=0 to Array.length simplearray -1 do
-      simplearray.(j) <- (Bigarray.Array1.get bigarray j).Complex.re /. 8800000.
-    done;
-    Queue.add simplearray queue_des_coefficients 
-  done;
+  for i=paquets_d'echantillons/4 to 3*paquets_d'echantillons/4 do
+		let bigarray = fft (Queue.take queue_des_echantillons) in
+		let simplearray = Array.make (Bigarray.Array1.dim bigarray) 0. in
+		for j=0 to Array.length simplearray -1 do
+			simplearray.(j) <- (Bigarray.Array1.get bigarray j).Complex.re /. 8800000.
+		done;
+		Queue.add simplearray queue_des_coefficients 
+	done;
   queue_des_coefficients
 
 let main=transformée_de_fourier
