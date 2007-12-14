@@ -21,7 +21,7 @@ tab_couples.(i+lgr_a) <- Queue.pop queue_b,[|0.1; 0.95|];
 (*	ignore (Queue.pop queue); *)
 done;;
 
-let tmp=super_train_log res tab_couples 0.5 100 sigmoide;;
+let tmp=super_train_log res tab_couples 0.5 (600*100) sigmoide;;
 
 let (_,l2)=tmp in affiche "../results/alphabet_erreur" (List.rev l2);;
 
