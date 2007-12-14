@@ -1,4 +1,4 @@
-Gc.set {(Gc.get()) with Gc.minor_heap_size=20000000};;
+Gc.set {(Gc.get()) with Gc.minor_heap_size=200000};;
 
 Random.init (int_of_float (Unix.time ()));;
 
@@ -9,10 +9,16 @@ type reseau=neurone array array;;
 let t=ref 0.;;
 let scan_int () = Scanf.scanf " %d" (fun x -> x);;
 let sigmoide =fun x->1./. (1. +.exp (-.x));;
+<<<<<<< .mine
+let dsigm x=
+  let exp_moins_x = exp (-.x) in
+    exp_moins_x /. (1. +.  exp_moins_x) **2.;;
+=======
 let dsigm x=
   let exp_moins_x=exp (-.x) in
     exp_moins_x /. (1. +. exp_moins_x) ** 2.
 ;;
+>>>>>>> .r25
 
 let propagation entree (res:reseau) sigmoide=
 	let m=Array.length res in
@@ -219,32 +225,34 @@ done
 
 
 let super_train_log (res:reseau) tab_couples eta nb_test_max sigmoide=(*pseudo logarithmique, sert juste a mieux visualiser la pente initiale*)
-let pas=ref eta in
-let mistake=ref 1. in
-let last_erreur=ref 1. in
-let i=ref 0 in
-let go_on=ref true in
-let l1,l2=ref [],ref [] in
-Sys.catch_break true;
-try
-while !go_on && (*!i<= 1000000 &&*) !last_erreur > 0.001(*ceci est la borne sup
-des erreurs acceptées*) && !i < nb_test_max do
-	(*Printf.printf "%f\n" (!mistake);*)
-	entrainement res tab_couples !pas (10000) sigmoide;
-	mistake := super_erreur res tab_couples;
-	(match !i mod 4 with 0->Printf.printf "-" |1->Printf.printf "\\" | 2->Printf.printf "|" | _->Printf.printf "/" );
-	l1:=(!i)::(!l1);
-	l2:=( !mistake)::(!l2);
-	(*if abs (!mistake -. !last_erreur) <0.0000001 then anti_poids_nul res;*)
-	(*go_on := abs (!mistake -. !last_erreur) >0.00001;(* si plus de modif arrete toi*)*)
-	incr i;
-	last_erreur := super_erreur res tab_couples;
-	flush stdout;
-done;
-Printf.printf "au bout de: %d\n" (!i*3000);
-(!l1,!l2)
-with Sys.Break -> Printf.printf "au bout de: %d\n" (!i*3000);
-(!l1,!l2)
+  let pas=ref eta in
+  let mistake=ref 1. in
+  let last_erreur=ref 1. in
+  let i=ref 0 in
+  let go_on=ref true in
+  let l1,l2=ref [],ref [] in
+  Sys.catch_break true;
+  let out_channel_disque=open_out "../results/fur_et_à_mesure" in
+  try
+    while !go_on && (*!i<= 1000000 &&*) !last_erreur > 0.001(*ceci est la borne sup
+    des erreurs acceptées*) && !i < nb_test_max do
+          (*Printf.printf "%f\n" (!mistake);*)
+          entrainement res tab_couples !pas (10000) sigmoide;
+          mistake := super_erreur res tab_couples;
+          (match !i mod 4 with 0->Printf.printf "-" |1->Printf.printf "\\" | 2->Printf.printf "|" | _->Printf.printf "/" );
+          l1:=(!i)::(!l1);
+          l2:=(!mistake)::(!l2);
+          Printf.fprintf out_channel_disque "%010d %9f\n" !i !mistake;
+          (*if abs (!mistake -. !last_erreur) <0.0000001 then anti_poids_nul res;*)
+          (*go_on := abs (!mistake -. !last_erreur) >0.00001;(* si plus de modif arrete toi*)*)
+          incr i;
+          last_erreur := super_erreur res tab_couples;
+          flush stdout;
+    done;
+    Printf.printf "au bout de: %d\n" (!i*3000);
+    (!l1,!l2)
+  with Sys.Break -> Printf.printf "au bout de: %d\n" (!i*3000);
+    (!l1,!l2)
 ;;
 
 

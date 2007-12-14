@@ -25,7 +25,7 @@ done;;
 for i=1 to 15 do
   for j=1 to 15 do
     let res= generation [|i;j;2 |] 80 in
-    let _,l2 = super_train_log res  tab_couples 0.5 200 sigmoide in
+    let _,l2 = super_train_log res  tab_couples 0.5 2000 sigmoide in
     bob.(i-1).(j-1) <- super_erreur res tab_couples ;
     Printf.printf " --------------- WHEEEE ! %d, %d done -------------- \n\n\n" i j;
     Affichage.affiche ("../results/alphabet" ^ (string_of_int i) ^","^ (string_of_int j)) (List.rev l2);
