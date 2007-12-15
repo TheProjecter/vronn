@@ -55,7 +55,7 @@ let création_des_echantillons fichier=
   let nombre_de_canaux=(valeur "number_of_channels") in 
   let echantillons_par_dt=echantillonage*dt/1000 in 
   let bits_par_dt=(valeur "significant_bits_per_sample")*echantillons_par_dt in 
-  let paquets_d'echantillons=(valeur "data_length")/bits_par_dt in 
+  let paquets_d'echantillons=(valeur "data_length")*8/bits_par_dt in 
   (* debug: affiche toutes les valeurs stockées dans la table de hachage
     * let prnt a=function
     |S s -> Printf.printf "%s : %s" a s; print_endline ""
@@ -79,10 +79,7 @@ let transformée_de_fourier fichier=
   let echantillons_par_dt,nombre_de_canaux,paquets_d'echantillons,queue_des_echantillons=création_des_echantillons fichier in
   let fft=Fftw2.create Fftw2.backward echantillons_par_dt in
   let queue_des_coefficients=Queue.create () in
-  for i=0 to paquets_d'echantillons/4-1 do
-    Queue.take queue_des_echantillons;
-  done;
-  for i=paquets_d'echantillons/4 to 3*paquets_d'echantillons/4 do
+  for i=0 to paquets_d'echantillons-1 do
 		let bigarray = fft (Queue.take queue_des_echantillons) in
 		let simplearray = Array.make (Bigarray.Array1.dim bigarray) 0. in
 		for j=0 to Array.length simplearray -1 do
