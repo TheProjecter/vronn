@@ -215,8 +215,8 @@ let anti_poids_nul res= (*permet de sauver les meubles si les poids deviennent n
 
 let super_train_log_eta (res:reseau) tab_couples eta nb_test_max sigmoide=
   let pas=ref eta in
-  let mistake=ref 1. in
-  let last_erreur=ref 1. in
+  let mistake=ref super_erreur res tab_couples in
+  let last_erreur=ref !mistake in
   let i=ref 0 in
   let go_on=ref true in
   let l1,l2=ref [],ref [] in
@@ -232,9 +232,9 @@ let super_train_log_eta (res:reseau) tab_couples eta nb_test_max sigmoide=
       l2:=(!mistake)::(!l2);
       (*if abs (!mistake -. !last_erreur) <0.0000001 then anti_poids_nul res;*)
       (*go_on := abs (!mistake -. !last_erreur) >0.00001;(* si plus de modif arrete toi*)*)
-      if abs (!mistake -. !last_erreur) < 0.0001
-        then pas := !pas *. 0.96
-        else pas := min (1.04 *. !pas) 2.;
+      pas := if abs (!mistake -. !last_erreur) < 0.0001
+        then max (!pas *. 0.96) 0.1;
+        else min (1.04 *. !pas) 2.;
       Printf.printf "Le pas est %f\n" !pas;
       incr i;
       last_erreur := super_erreur res tab_couples;
