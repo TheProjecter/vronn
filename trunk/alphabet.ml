@@ -28,6 +28,6 @@ let (_,l2)=tmp in affiche "./results/alphabet_erreur" (List.rev l2);;
 
 (*test res tab_couples;;*)
 
-Printf.printf "Erreur %f \n\n" (erreur res tab_couples);;
+Printf.printf "Erreur %f \n\n" (super_erreur res tab_couples);;
 
 save_struct res "./results/alphabet_struct";;

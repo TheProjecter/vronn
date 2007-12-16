@@ -73,10 +73,10 @@ let création_des_echantillons fichier=
     done in
     Queue.add !bigarray_courante queue_des_echantillons 
   done in
-  echantillons_par_dt,nombre_de_canaux,paquets_d'echantillons,queue_des_echantillons
+  echantillons_par_dt,paquets_d'echantillons,queue_des_echantillons
 
 let transformée_de_fourier fichier=
-  let echantillons_par_dt,nombre_de_canaux,paquets_d'echantillons,queue_des_echantillons=création_des_echantillons fichier in
+  let echantillons_par_dt,paquets_d'echantillons,queue_des_echantillons=création_des_echantillons fichier in
   let fft=Fftw2.create Fftw2.backward echantillons_par_dt in
   let queue_des_coefficients=Queue.create () in
   for i=0 to paquets_d'echantillons-1 do
