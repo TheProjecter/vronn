@@ -193,7 +193,57 @@ let super_train_log_eta (res:reseau) tab_couples eta nb_test_max sigmoide=
     (!l1,!l2)
 ;;
 
+(* sauvegarde et lit les poids avec une précision de 20 chiffres *)
+let save_struct_printf_scanf (reseau:reseau) file=
+  let fichier=open_out file in
+  Printf.fprintf fichier (*taille du reseau*) "%d\n" (Array.length reseau);
+    for couche=0 to (Array.length reseau) - 1 do
+      Printf.fprintf fichier (*taille de la couche*) "%d\n" (Array.length reseau.(couche));
+      for neur=0 to Array.length reseau.(couche) -1 do
+        Printf.fprintf fichier (*taille des entrees des neurones*) "%d\n" (Array.length reseau.(couche).(neur).poids) ;
+        for weight=0 to Array.length reseau.(couche).(neur).poids - 1 do
+          Printf.fprintf fichier "%.20f\n" reseau.(couche).(neur).poids.(weight)
+        done
+      done
+    done;
+  Printf.fprintf fichier "bien termine";
+close_out fichier
+;;
 
+
+let load_struct_printf_scanf file=
+	let in_channel=open_in file in
+	let read_int=function x -> int_of_string (input_line x) in
+	let read_float=function x -> float_of_string (input_line x) in
+	let nb_couche=read_int in_channel in
+	let new_neur taille nbre= 
+		begin 
+			let tmp=Array.make taille 0. in
+			{poids=tmp ;activation=0. ;sortie=0. ; sensib= 0.}
+		end in
+	let reseau=Array.make nb_couche [||] in
+	for couche=0 to nb_couche -1 do
+		reseau.(couche) <- 
+			begin 
+				let taille_couche=read_int in_channel in
+				let tmp = Array.make taille_couche (new_neur 0 1.) in
+				for neur=0 to taille_couche-1 do
+					let taille_prec=read_int in_channel in
+					tmp.(neur) <- new_neur (taille_prec) 1.;
+					for weight=0 to taille_prec-1 do
+						tmp.(neur).poids.(weight)<-read_float in_channel
+					done
+				done;
+				tmp
+			end;
+	done;
+	close_in in_channel;
+	Printf.printf "bien importe\n";
+	(reseau:reseau)
+;;
+
+
+(*
 let save_struct reseau file=
   let out_channel=open_out file in
   let _=Marshal.to_channel out_channel reseau [] in
@@ -204,7 +254,7 @@ let load_struct file=
   let reseau=Marshal.from_channel in_channel in
   let _=close_in in_channel in
   reseau
-
+*)
 
 
 
@@ -322,55 +372,3 @@ let super_train_log (res:reseau) tab_couples eta nb_test_max sigmoide=(*pseudo l
 ;;
 *)
 
-
-(* sauvegarde et lit les poids avec une précision de 20 chiffres *)
-(*let save_struct_printf_scanf (reseau:reseau) file=
-  let fichier=open_out file in
-  Printf.fprintf fichier (*taille du reseau*) "%d\n" (Array.length reseau);
-    for couche=0 to (Array.length reseau) - 1 do
-      Printf.fprintf fichier (*taille de la couche*) "%d\n" (Array.length reseau.(couche));
-      for neur=0 to Array.length reseau.(couche) -1 do
-        Printf.fprintf fichier (*taille des entrees des neurones*) "%d\n" (Array.length reseau.(couche).(neur).poids) ;
-        for weight=0 to Array.length reseau.(couche).(neur).poids - 1 do
-          Printf.fprintf fichier "%.20f\n" reseau.(couche).(neur).poids.(weight)
-        done
-      done
-    done;
-  Printf.fprintf fichier "bien termine";
-close_out fichier
-;;
-*)
-
-
-(*
-let load_struct_printf_scanf file=
-	let in_channel=open_in file in
-	let read_int=function x -> int_of_string (input_line x) in
-	let read_float=function x -> float_of_string (input_line x) in
-	let nb_couche=read_int in_channel in
-	let new_neur taille nbre= 
-		begin 
-			let tmp=Array.make taille 0. in
-			{poids=tmp ;activation=0. ;sortie=0. ; sensib= 0.}
-		end in
-	let reseau=Array.make nb_couche [||] in
-	for couche=0 to nb_couche -1 do
-		reseau.(couche) <- 
-			begin 
-				let taille_couche=read_int in_channel in
-				let tmp = Array.make taille_couche (new_neur 0 1.) in
-				for neur=0 to taille_couche-1 do
-					let taille_prec=read_int in_channel in
-					tmp.(neur) <- new_neur (taille_prec) 1.;
-					for weight=0 to taille_prec-1 do
-						tmp.(neur).poids.(weight)<-read_float in_channel
-					done
-				done;
-				tmp
-			end;
-	done;
-	close_in in_channel;
-	Printf.printf "bien importe\n";
-	(reseau:reseau)
-;;
-*)
