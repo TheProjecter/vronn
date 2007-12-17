@@ -10,7 +10,7 @@ let lgr = lgr_a + lgr_b;;
 open Ajourbiais
 open Affichage
 
-let res=generation [|20;2|] 80;;
+let res=generation [|50;20;2|] 80;;
 
 let tab_couples=Array.make lgr ([||],[||]);;
 for i=0 to lgr_a-1 do
