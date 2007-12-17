@@ -60,8 +60,9 @@ let création_des_echantillons fichier=
     * let prnt a=function
     |S s -> Printf.printf "%s : %s" a s; print_endline ""
     |I i -> Printf.printf "%s : %d" a i; print_endline ""
-  let _=Hashtbl.iter prnt header_parsé
-  let _=print_endline (string_of_int paquets_d'echantillons)
+  in
+  let _=Hashtbl.iter prnt header_parsé in
+  let _=print_endline (string_of_int paquets_d'echantillons) in
   *)
 
   let queue_des_echantillons=Queue.create () in 
