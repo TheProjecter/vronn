@@ -1,4 +1,4 @@
-let bob=Array.make_matrix 15 15 0.;;
+let result=Array.make_matrix 15 15 0.;;
 
 let queue_a = Fft.main "./alphabet/a.wav";;
 let queue_b = Fft.main "./alphabet/b.wav";;
@@ -26,7 +26,7 @@ for i=1 to 15 do
   for j=1 to 15 do
     let res= generation [|i;j;2 |] 80 in
     let _,l2 = super_train_log res  tab_couples 0.5 2000 sigmoide in
-    bob.(i-1).(j-1) <- super_erreur res tab_couples ;
+    result.(i-1).(j-1) <- super_erreur res tab_couples ;
     Printf.printf " --------------- WHEEEE ! %d, %d done -------------- \n\n\n" i j;
     Affichage.affiche ("./results/alphabet" ^ (string_of_int i) ^","^ (string_of_int j)) (List.rev l2);
 		save_struct res ("./results/alphabet" ^ (string_of_int i) ^","^ (string_of_int j) ^"_struct")
@@ -38,14 +38,14 @@ let troiz (_,_,z) = z;;
 let min1,min2,min3 = ref (0,0,1.), ref (0,0,1.), ref (0,0,1.) in
 for i=0 to 14 do
   for j=0 to 14 do
-    if bob.(i).(j) < troiz !min1 then
+    if result.(i).(j) < troiz !min1 then
       begin
-        min3 := !min2; min2:= !min1; min1 := (i+1,j+1,bob.(i).(j))
+        min3 := !min2; min2:= !min1; min1 := (i+1,j+1,result.(i).(j))
       end
-		else if bob.(i).(j) < troiz !min2 then  begin
-        min3 := !min2; min2:= (i+1,j+1,bob.(i).(j))
-    end else if bob.(i).(j) < troiz !min3 then  begin
-       min3:= (i+1,j+1,bob.(i).(j))
+		else if result.(i).(j) < troiz !min2 then  begin
+        min3 := !min2; min2:= (i+1,j+1,result.(i).(j))
+    end else if result.(i).(j) < troiz !min3 then  begin
+       min3:= (i+1,j+1,result.(i).(j))
     end
   done
 done;
