@@ -194,7 +194,7 @@ let super_train_log_eta (res:reseau) tab_couples eta nb_test_max sigmoide=
 ;;
 
 (* sauvegarde et lit les poids avec une précision de 20 chiffres *)
-let save_struct_printf_scanf (reseau:reseau) file=
+let save_struct (reseau:reseau) file=
   let fichier=open_out file in
   Printf.fprintf fichier (*taille du reseau*) "%d\n" (Array.length reseau);
     for couche=0 to (Array.length reseau) - 1 do
@@ -211,7 +211,7 @@ close_out fichier
 ;;
 
 
-let load_struct_printf_scanf file=
+let load_struct file=
 	let in_channel=open_in file in
 	let read_int=function x -> int_of_string (input_line x) in
 	let read_float=function x -> float_of_string (input_line x) in

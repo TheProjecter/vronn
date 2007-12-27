@@ -4,41 +4,43 @@ exception Value_not_equal_check_value of string
 type value=S of string | I of int
 and gen_fct= ((string, value) Hashtbl.t -> ((in_channel -> value) * string * gen_fct option) list)
 
-let input_byte ic=I (input_byte ic)
+let input_byte ic= (input_byte ic)
 
 (* several reading functions *)
 
 let little_endian_read_ui16 in_channel=
-  let I premiere_partie=input_byte in_channel in
-    let I seconde_partie=input_byte in_channel in
-      I ((seconde_partie lsl 8) lor premiere_partie)
+  let  premiere_partie=input_byte in_channel in
+    let  seconde_partie=input_byte in_channel in
+       ((seconde_partie lsl 8) lor premiere_partie)
 
 let little_endian_read_ui32 in_channel=
-  let I premiere_partie=little_endian_read_ui16 in_channel in
-  let I seconde_partie=little_endian_read_ui16 in_channel in
-      I ((seconde_partie lsl 16) lor premiere_partie)
+  let  premiere_partie=little_endian_read_ui16 in_channel in
+  let  seconde_partie=little_endian_read_ui16 in_channel in
+       ((seconde_partie lsl 16) lor premiere_partie)
 
-let little_endian_read_ui8n=function
-  |1->input_byte
-  |2->little_endian_read_ui16
-  |4->little_endian_read_ui32
-  |n->raise  (A_implementer ("read_ui8*"^(string_of_int n)^"\n"))
+let little_endian_read_ui8n n ic=
+  match n with
+    |1->I (input_byte ic)
+    |2->I (little_endian_read_ui16 ic)
+    |4->I (little_endian_read_ui32 ic)
+    |n->raise  (A_implementer ("read_ui8*"^(string_of_int n)^"\n"))
 
 let big_endian_read_ui16 in_channel=
-  let I premiere_partie=input_byte in_channel in
-    let I seconde_partie=input_byte in_channel in
-      I ((premiere_partie lsl 8) lor seconde_partie)
+  let  premiere_partie=input_byte in_channel in
+    let  seconde_partie=input_byte in_channel in
+      ((premiere_partie lsl 8) lor seconde_partie)
 
 let big_endian_read_ui32 in_channel=
-  let I premiere_partie=big_endian_read_ui16 in_channel in
-  let I seconde_partie=big_endian_read_ui16 in_channel in
-      I ((premiere_partie lsl 16) lor seconde_partie)
+  let  premiere_partie=big_endian_read_ui16 in_channel in
+  let  seconde_partie=big_endian_read_ui16 in_channel in
+      ((premiere_partie lsl 16) lor seconde_partie)
 
-let big_endian_read_ui8n=function
-  |1->input_byte
-  |2->big_endian_read_ui16
-  |4->big_endian_read_ui32
-  |n->raise  (A_implementer ("read_ui8"^(string_of_int n)^"\n"))
+let big_endian_read_ui8n n ic=
+  match n with
+    |1->I (input_byte ic)
+    |2->I (big_endian_read_ui16 ic)
+    |4->I (big_endian_read_ui32 ic)
+    |n->raise  (A_implementer ("read_ui8"^(string_of_int n)^"\n"))
 
 (* real start *)
 
