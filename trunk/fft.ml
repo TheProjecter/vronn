@@ -7,12 +7,6 @@ exception Unknown_type;;
 (* une petite définition de fainéant, heu... qui améliore la lisibilité du code *)
 let read_ui8n=little_endian_read_ui8n
 let int_of_I=function I n->n |_-> assert false 
-let moyenne_des_canaux profondeur nombre_de_canaux in_channel=
-  let placeholder=ref 0. in
-  let _=for i=0 to nombre_de_canaux-1 do
-    placeholder:=!placeholder+.float ((int_of_I (read_ui8n profondeur in_channel))/nombre_de_canaux)
-  done in
-  !placeholder
 
 (* définition de la liste de parsing *)
 let rec parsing_list_of_chunk_id hashtbl=
@@ -42,6 +36,13 @@ and riff_chunk=[
   read_ui8n 4, "total_length", None;
   input_string 4, "type", Some (type_of_riff_chunk);
 ]
+
+let moyenne_des_canaux profondeur nombre_de_canaux in_channel=
+  let placeholder=ref 0. in
+  let _=for i=0 to nombre_de_canaux-1 do
+    placeholder:=!placeholder+.float ((int_of_I (read_ui8n profondeur in_channel))/nombre_de_canaux)
+  done in
+  !placeholder
 
 let création_des_echantillons fichier=
   let in_channel,header_parsé=BinaryFileParse.header_parse (open_in_bin fichier) riff_chunk in 
