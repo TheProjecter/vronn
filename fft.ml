@@ -6,7 +6,7 @@ exception Unknown_type;;
 
 (* une petite définition de fainéant, heu... qui améliore la lisibilité du code *)
 let read_ui8n=little_endian_read_ui8n
-let int_of_I=function I n->n 
+let int_of_I=function I n->n |_-> assert false 
 let moyenne_des_canaux profondeur nombre_de_canaux in_channel=
   let placeholder=ref 0. in
   let _=for i=0 to nombre_de_canaux-1 do
