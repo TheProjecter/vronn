@@ -1,7 +1,7 @@
-(*let input_string=BinaryFileParse.input_string
-let gen_fct=BinaryFileParse.gen_fct
-type value=BinaryFileParse.value*)
-open BinaryFileParse
+(*let input_string=BinaryParse.input_string
+let gen_fct=BinaryParse.gen_fct
+type value=BinaryParse.value*)
+open BinaryParse
 exception Unknown_type;;
 
 (* une petite définition de fainéant, heu... qui améliore la lisibilité du code *)
@@ -45,7 +45,7 @@ let moyenne_des_canaux profondeur nombre_de_canaux in_channel=
   !placeholder
 
 let création_des_echantillons fichier=
-  let in_channel,header_parsé=BinaryFileParse.header_parse (open_in_bin fichier) riff_chunk in 
+  let in_channel,header_parsé=header_parse (open_in_bin fichier) riff_chunk in 
   let valeur nom=int_of_I (Hashtbl.find header_parsé nom) in 
 
   (* récupération des valeurs stockées dans la table de hachage et 
