@@ -1,12 +1,9 @@
 exception A_implementer of string
-exception Value_not_equal_check_value of string
 
 type value=S of string | I of int
 and gen_fct= ((string, value) Hashtbl.t -> ((in_channel -> value) * string * gen_fct option) list)
 
 (* several reading functions *)
-
-let input_byte ic=input_byte ic
 
 let little_endian_read_ui16 in_channel=
   let premiere_partie=input_byte in_channel in
