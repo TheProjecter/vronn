@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link rel="next" href="BinaryParse.html">
+<link rel="Up" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of exceptions" rel=Appendix href="index_exceptions.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Fft" rel="Chapter" href="Fft.html">
+<link title="BinaryParse" rel="Chapter" href="BinaryParse.html"><title>Fft</title>
+</head>
+<body>
+<div class="navbar">&nbsp;<a href="index.html">Up</a>
+&nbsp;<a href="BinaryParse.html">Next</a>
+</div>
+<center><h1>Module <a href="type_Fft.html">Fft</a></h1></center>
+<br>
+<pre><span class="keyword">module</span> Fft: <code class="code">sig</code> <a href="Fft.html">..</a> <code class="code">end</code></pre>Génère un tableau des coefficients de la transformée de fourier à partir du
+ * chemin vers un fichier wav<br>
+<hr width="100%">
+<pre><span class="keyword">exception</span> <a name="EXCEPTIONUnknown_type"></a>Unknown_type</pre>
+<div class="info">
+Exception soulevée lorsque le programme n'est pas capable de s'occuper du
+ * fichier fournit. Peut arriver lorsque le fichier n'est pas un fichier wav
+ * avec un encodage pcm ou bien s'il utilise des champs du format wav que nous
+ * n'avons pas implémenter (visiblement à raison vu que nous n'avons pas encore
+ * eu cette exception).<br>
+</div>
+<pre><span class="keyword">val</span> <a name="VALmoyenne_des_canaux"></a>moyenne_des_canaux : <code class="type">int -> int -> Pervasives.in_channel -> float</code></pre><div class="info">
+Le réseau de neurone n'étant pas capable de gêrer les sons multi-canaux, en
+ * faire la moyenne permet de ne pas perdre d'information tout en créant des
+ * données compréhensibles par le réseau<br>
+</div>
+<pre><span class="keyword">val</span> <a name="VALcréation_des_echantillons"></a>création_des_echantillons : <code class="type">string -><br>       int * int *<br>       (Complex.t, Bigarray.complex64_elt, Bigarray.c_layout) Bigarray.Array1.t<br>       Queue.t</code></pre><div class="info">
+À partir d'un nom de fichier, renvoie une queue des valeurs contenues dans
+ * un fichier wav ainsi que deux entiers qui ne servent que pour la
+ * programmation<br>
+</div>
+<pre><span class="keyword">val</span> <a name="VALtransformée_de_fourier"></a>transformée_de_fourier : <code class="type">string -> float array Queue.t</code></pre><div class="info">
+Renvoie les coefficients de la transformée de fourier pour un fichier wav<br>
+</div>
+<pre><span class="keyword">val</span> <a name="VALmain"></a>main : <code class="type">string -> float array Queue.t</code></pre><div class="info">
+main peut-être utilisée à la place de transformée_de_fourier<br>
+</div>
+</body></html>

@@ -1,0 +1,23 @@
+<html><head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of exceptions" rel=Appendix href="index_exceptions.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Fft" rel="Chapter" href="Fft.html">
+<link title="BinaryParse" rel="Chapter" href="BinaryParse.html"><title>Fft</title>
+</head>
+<body>
+<code class="code"><span class="keyword">sig</span><br>
+&nbsp;&nbsp;<span class="keyword">exception</span>&nbsp;<span class="constructor">Unknown_type</span><br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;moyenne_des_canaux&nbsp;:&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Pervasives</span>.in_channel&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;création_des_echantillons&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;*&nbsp;int&nbsp;*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="constructor">Complex</span>.t,&nbsp;<span class="constructor">Bigarray</span>.complex64_elt,&nbsp;<span class="constructor">Bigarray</span>.c_layout)&nbsp;<span class="constructor">Bigarray</span>.<span class="constructor">Array1</span>.t<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Queue</span>.t<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;transformée_de_fourier&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;array&nbsp;<span class="constructor">Queue</span>.t<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;main&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;array&nbsp;<span class="constructor">Queue</span>.t<br>
+<span class="keyword">end</span></code></body></html>
