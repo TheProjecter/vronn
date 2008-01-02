@@ -39,9 +39,9 @@ and riff_chunk=[
 
 let moyenne_des_canaux profondeur nombre_de_canaux in_channel=
   let placeholder=ref 0. in
-  let _=for i=0 to nombre_de_canaux-1 do
+  for i=0 to nombre_de_canaux-1 do
     placeholder:=!placeholder+.float ((int_of_I (read_ui8n profondeur in_channel))/nombre_de_canaux)
-  done in
+  done;
   !placeholder
 
 let creation_des_echantillons fichier=
@@ -99,3 +99,6 @@ let cepstre fichier=
 let main fichier=
   let echantillons_par_dt,queue_des_echantillons=creation_des_echantillons fichier in
   queue_map (Fftw2.create Fftw2.forward echantillons_par_dt) queue_des_echantillons
+
+let re_array_of_cplx_bigarray1_norm norm bigarray=
+  Array.init (Bigarray.Array1.dim bigarray) (function i->bigarray.{i}.Complex.re /. norm)
