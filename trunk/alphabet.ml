@@ -28,7 +28,7 @@ let tmp=super_train_log_eta res tab_couples 0.8 (600*100) sigmoide;;
 
 let (_,l2)=tmp in affiche "./results/alphabet_erreur" (List.rev l2);;
 
-(*test res tab_couples;;*)
+(* test res tab_couples;;*)
 
 Printf.printf "Erreur %f \n\n" (super_erreur res tab_couples);;
 
