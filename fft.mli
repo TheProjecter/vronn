@@ -16,14 +16,31 @@ val moyenne_des_canaux : int -> int -> in_channel -> float
 (** À partir d'un nom de fichier, renvoie une queue des valeurs contenues dans
    un fichier wav ainsi que deux entiers qui ne servent que pour la
    programmation *)
-val création_des_echantillons :
+val creation_des_echantillons :
   string ->
-  int * int *
+  int * (Complex.t, Bigarray.complex64_elt, Bigarray.c_layout) Bigarray.Array1.t
+  Queue.t
+
+(** Fonctions de convénience et de lisibilité *)
+val queue_map : ('a -> 'b) -> 'a Queue.t -> 'b Queue.t
+val bigarray1_map :
+  ('a -> 'a) ->
+  ('a, 'b, 'c) Bigarray.Array1.t -> ('a, 'b, 'c) Bigarray.Array1.t
+
+(** Calcule le cepstre pour un fichier wav ; mauvais résultats pour l'instant *)
+val cepstre :
+  string ->
   (Complex.t, Bigarray.complex64_elt, Bigarray.c_layout) Bigarray.Array1.t
   Queue.t
 
-(** Renvoie les coefficients de la transformée de fourier pour un fichier wav *)
-val transformée_de_fourier : string -> float array Queue.t
+(** Calcule le spectre pour un fichier wav ; bon résultats. Mais pas moyen de
+ * savoir s'ils sont optimaux. *)
+val spectre :
+  string ->
+  (Complex.t, Bigarray.complex64_elt, Bigarray.c_layout) Bigarray.Array1.t
+  Queue.t
 
-(** main peut-être utilisée à la place de transformée_de_fourier *)
-val main : string -> float array Queue.t
+(** Transforme une Bigarray.Array1 en Array, le premier ne servant qu'à utiliser
+ * fftw2 *)
+val re_array_of_cplx_bigarray1_norm :
+  float -> (Complex.t, 'a, 'b) Bigarray.Array1.t -> float array

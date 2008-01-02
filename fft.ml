@@ -65,7 +65,6 @@ let creation_des_echantillons fichier=
   let _=Hashtbl.iter prnt header_parsé in
   let _=print_endline (string_of_int paquets_d'echantillons) in
   *)
-
   let queue_des_echantillons=Queue.create () in 
   let bigarray_courante=Bigarray.Array1.create Bigarray.complex64 Bigarray.c_layout echantillons_par_dt in
   for i=0 to paquets_d'echantillons-1 do
@@ -96,7 +95,7 @@ let cepstre fichier=
   let phase=queue_map (bigarray1_map Complex.log) spectres in
   queue_map (Fftw2.create Fftw2.backward echantillons_par_dt) phase
 
-let main fichier=
+let spectre fichier=
   let echantillons_par_dt,queue_des_echantillons=creation_des_echantillons fichier in
   queue_map (Fftw2.create Fftw2.forward echantillons_par_dt) queue_des_echantillons
 

@@ -53,24 +53,23 @@ let calcul_sensib (res:reseau) entree sortie eta=
     res.(m-1).(neur).sensib <- (dsigm res.(m-1).(neur).activation) *. (sortie.(neur) -. res.(m-1).(neur).sortie)
   done;
   (*calcul recursif*)
-  let couche=ref (m-2) and somme=ref 0. in
-  while !couche>=0 do
-    for neur=0 to Array.length res.(!couche) -1 do
+  let somme=ref 0. in
+  for couche=m-2 downto 0 do
+    for neur=0 to Array.length res.(couche) -1 do
       somme:=0.;
-      let couche_plus_un= !couche+1 in
+      let couche_plus_un= couche+1 in
       for k=0 to Array.length res.(couche_plus_un) -1 do
         somme := !somme +. (res.(couche_plus_un).(k).sensib *. res.(couche_plus_un).(k).poids.(neur))
       done;
-      res.(!couche).(neur).sensib <- (dsigm res.(!couche).(neur).activation) *. !somme;
+      res.(couche).(neur).sensib <- (dsigm res.(couche).(neur).activation) *. !somme;
       for k=0 to Array.length res.(couche_plus_un) -1 do (* modifie les poids de la couche*)
         let t=eta *. res.(couche_plus_un).(k).sensib in
         res.(couche_plus_un).(k).poids.(neur) <-
-          res.(couche_plus_un).(k).poids.(neur) +. (t *. res.(!couche).(neur).sortie);
-        res.(couche_plus_un).(k).poids.(Array.length res.(!couche)) <-
-          res.(couche_plus_un).(k).poids.(Array.length res.(!couche)) -. t (*mise a jour du biais qui ne depend que de la sensib*);
+          res.(couche_plus_un).(k).poids.(neur) +. (t *. res.(couche).(neur).sortie);
+        res.(couche_plus_un).(k).poids.(Array.length res.(couche)) <-
+          res.(couche_plus_un).(k).poids.(Array.length res.(couche)) -. t (*mise a jour du biais qui ne depend que de la sensib*);
       done;
     done;
-    decr couche
   done;
   (*on modifie la premiere couche; !couche=-1*)
   for input=0 to Array.length entree-1 do
@@ -164,12 +163,12 @@ let super_train_log_eta (res:reseau) tab_couples eta nb_test_max sigmoide=
   let i=ref 0 in
   let go_on=ref true in
   let l1,l2=ref [],ref [] in
-  let saut=10000 in
+  let saut=4000 in
   let log_c=open_out_bin "./results/pour_gnuplot.txt" in
   Sys.catch_break true;
   try
-    while !go_on && !last_erreur > 0.0001 (*ceci est la borne sup des erreurs acceptées*) && !i < nb_test_max do
-      Printf.printf "%f\n" (!mistake);
+    while !go_on && !last_erreur > 0.00001 (*ceci est la borne sup des erreurs acceptées*) && !i < nb_test_max do
+      Printf.printf "%.16f\n" (!mistake);
       entrainement res tab_couples !pas (saut) sigmoide;
       mistake := super_erreur res tab_couples;
       Printf.fprintf log_c "%d %f\n" !i !mistake;
@@ -186,7 +185,7 @@ let super_train_log_eta (res:reseau) tab_couples eta nb_test_max sigmoide=
       last_erreur := super_erreur res tab_couples;
       flush stdout;
     done;
-    Printf.printf "%f\n" (!last_erreur); Printf.printf "Le pas est %f\n" !pas;
+    Printf.printf "%.16f\n" (!last_erreur); Printf.printf "Le pas est %f\n" !pas;
     Printf.printf "\nAu bout de: %d\n" (!i*saut);
     if !i=nb_test_max
       then Printf.printf "Raison d'arrêt : nb_test_max (%d) atteint\n" (nb_test_max*saut)
