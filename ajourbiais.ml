@@ -165,12 +165,14 @@ let super_train_log_eta (res:reseau) tab_couples eta nb_test_max sigmoide=
   let go_on=ref true in
   let l1,l2=ref [],ref [] in
   let saut=10000 in
+  let log_c=open_out_bin "./results/pour_gnuplot.txt" in
   Sys.catch_break true;
   try
-    while !go_on && !last_erreur > 0.001 (*ceci est la borne sup des erreurs acceptées*) && !i < nb_test_max do
+    while !go_on && !last_erreur > 0.0001 (*ceci est la borne sup des erreurs acceptées*) && !i < nb_test_max do
       Printf.printf "%f\n" (!mistake);
       entrainement res tab_couples !pas (saut) sigmoide;
       mistake := super_erreur res tab_couples;
+      Printf.fprintf log_c "%d %f\n" !i !mistake;
       (match !i mod 4 with 0->Printf.printf "-" |1->Printf.printf "\\" | 2->Printf.printf "|" | _->Printf.printf "/" );
       l1:=(!i)::(!l1);
       l2:=(!mistake)::(!l2);
@@ -184,6 +186,7 @@ let super_train_log_eta (res:reseau) tab_couples eta nb_test_max sigmoide=
       last_erreur := super_erreur res tab_couples;
       flush stdout;
     done;
+    Printf.printf "%f\n" (!last_erreur); Printf.printf "Le pas est %f\n" !pas;
     Printf.printf "\nAu bout de: %d\n" (!i*saut);
     if !i=nb_test_max
       then Printf.printf "Raison d'arrêt : nb_test_max (%d) atteint\n" (nb_test_max*saut)
