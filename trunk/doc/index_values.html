@@ -20,8 +20,15 @@ Fonction identique à la précédente exceptée qu'elle sert à lire des entiers
    stockés en big endian.
 </div>
 </td></tr>
+<tr><td><a href="Fft.html#VALbigarray1_map">bigarray1_map</a> [<a href="Fft.html">Fft</a>]</td>
+<td></td></tr>
 <tr><td align="left"><br>C</td></tr>
-<tr><td><a href="Fft.html#VALcréation_des_echantillons">création_des_echantillons</a> [<a href="Fft.html">Fft</a>]</td>
+<tr><td><a href="Fft.html#VALcepstre">cepstre</a> [<a href="Fft.html">Fft</a>]</td>
+<td><div class="info">
+Calcule le cepstre pour un fichier wav ; mauvais résultats pour l'instant
+</div>
+</td></tr>
+<tr><td><a href="Fft.html#VALcreation_des_echantillons">creation_des_echantillons</a> [<a href="Fft.html">Fft</a>]</td>
 <td><div class="info">
 À partir d'un nom de fichier, renvoie une queue des valeurs contenues dans
    un fichier wav ainsi que deux entiers qui ne servent que pour la
@@ -50,11 +57,6 @@ Cette fonction sert à lire les entiers stockés en little endian et prennent
 </div>
 </td></tr>
 <tr><td align="left"><br>M</td></tr>
-<tr><td><a href="Fft.html#VALmain">main</a> [<a href="Fft.html">Fft</a>]</td>
-<td><div class="info">
-main peut-être utilisée à la place de transformée_de_fourier
-</div>
-</td></tr>
 <tr><td><a href="Fft.html#VALmoyenne_des_canaux">moyenne_des_canaux</a> [<a href="Fft.html">Fft</a>]</td>
 <td><div class="info">
 Le réseau de neurone n'étant pas capable de gêrer les sons multi-canaux, en
@@ -62,10 +64,23 @@ Le réseau de neurone n'étant pas capable de gêrer les sons multi-canaux, en
    données compréhensibles par le réseau
 </div>
 </td></tr>
-<tr><td align="left"><br>T</td></tr>
-<tr><td><a href="Fft.html#VALtransformée_de_fourier">transformée_de_fourier</a> [<a href="Fft.html">Fft</a>]</td>
+<tr><td align="left"><br>Q</td></tr>
+<tr><td><a href="Fft.html#VALqueue_map">queue_map</a> [<a href="Fft.html">Fft</a>]</td>
 <td><div class="info">
-Renvoie les coefficients de la transformée de fourier pour un fichier wav
+Fonctions de convénience et de lisibilité
+</div>
+</td></tr>
+<tr><td align="left"><br>R</td></tr>
+<tr><td><a href="Fft.html#VALre_array_of_cplx_bigarray1_norm">re_array_of_cplx_bigarray1_norm</a> [<a href="Fft.html">Fft</a>]</td>
+<td><div class="info">
+Transforme une Bigarray.Array1 en Array, le premier ne servant qu'à utiliser
+ * fftw2
+</div>
+</td></tr>
+<tr><td align="left"><br>S</td></tr>
+<tr><td><a href="Fft.html#VALspectre">spectre</a> [<a href="Fft.html">Fft</a>]</td>
+<td><div class="info">
+Calcule le spectre pour un fichier wav ; bon résultats.
 </div>
 </td></tr>
 </table><br>

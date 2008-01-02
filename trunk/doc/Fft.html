@@ -35,15 +35,23 @@ Le réseau de neurone n'étant pas capable de gêrer les sons multi-canaux, en
    faire la moyenne permet de ne pas perdre d'information tout en créant des
    données compréhensibles par le réseau<br>
 </div>
-<pre><span class="keyword">val</span> <a name="VALcréation_des_echantillons"></a>création_des_echantillons : <code class="type">string -><br>       int * int *<br>       (Complex.t, Bigarray.complex64_elt, Bigarray.c_layout) Bigarray.Array1.t<br>       Queue.t</code></pre><div class="info">
+<pre><span class="keyword">val</span> <a name="VALcreation_des_echantillons"></a>creation_des_echantillons : <code class="type">string -><br>       int *<br>       (Complex.t, Bigarray.complex64_elt, Bigarray.c_layout) Bigarray.Array1.t<br>       Queue.t</code></pre><div class="info">
 À partir d'un nom de fichier, renvoie une queue des valeurs contenues dans
    un fichier wav ainsi que deux entiers qui ne servent que pour la
    programmation<br>
 </div>
-<pre><span class="keyword">val</span> <a name="VALtransformée_de_fourier"></a>transformée_de_fourier : <code class="type">string -> float array Queue.t</code></pre><div class="info">
-Renvoie les coefficients de la transformée de fourier pour un fichier wav<br>
+<pre><span class="keyword">val</span> <a name="VALqueue_map"></a>queue_map : <code class="type">('a -> 'b) -> 'a Queue.t -> 'b Queue.t</code></pre><div class="info">
+Fonctions de convénience et de lisibilité<br>
 </div>
-<pre><span class="keyword">val</span> <a name="VALmain"></a>main : <code class="type">string -> float array Queue.t</code></pre><div class="info">
-main peut-être utilisée à la place de transformée_de_fourier<br>
+<pre><span class="keyword">val</span> <a name="VALbigarray1_map"></a>bigarray1_map : <code class="type">('a -> 'a) -><br>       ('a, 'b, 'c) Bigarray.Array1.t -> ('a, 'b, 'c) Bigarray.Array1.t</code></pre><pre><span class="keyword">val</span> <a name="VALcepstre"></a>cepstre : <code class="type">string -><br>       (Complex.t, Bigarray.complex64_elt, Bigarray.c_layout) Bigarray.Array1.t<br>       Queue.t</code></pre><div class="info">
+Calcule le cepstre pour un fichier wav ; mauvais résultats pour l'instant<br>
+</div>
+<pre><span class="keyword">val</span> <a name="VALspectre"></a>spectre : <code class="type">string -><br>       (Complex.t, Bigarray.complex64_elt, Bigarray.c_layout) Bigarray.Array1.t<br>       Queue.t</code></pre><div class="info">
+Calcule le spectre pour un fichier wav ; bon résultats. Mais pas moyen de
+ * savoir s'ils sont optimaux.<br>
+</div>
+<pre><span class="keyword">val</span> <a name="VALre_array_of_cplx_bigarray1_norm"></a>re_array_of_cplx_bigarray1_norm : <code class="type">float -> (Complex.t, 'a, 'b) Bigarray.Array1.t -> float array</code></pre><div class="info">
+Transforme une Bigarray.Array1 en Array, le premier ne servant qu'à utiliser
+ * fftw2<br>
 </div>
 </body></html>
