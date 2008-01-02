@@ -1,7 +1,8 @@
 print_endline "Exécution de la fft sur a.wav...";;
-let queue_a = Fft.main "./alphabet/a.wav";;
+let queue_a = Fft.queue_map (Fft.re_array_of_cplx_bigarray1_norm 8800000.) (Fft.main "./alphabet/a.wav");;
+Printf.printf "%d\n" (Queue.length queue_a);
 print_endline "Exécution de la fft sur b.wav...";;
-let queue_b = Fft.main "./alphabet/b.wav";;
+let queue_b = Fft.queue_map (Fft.re_array_of_cplx_bigarray1_norm 8800000.) (Fft.main "./alphabet/b.wav");;
 print_endline "Ffts effectuées.";;
 print_endline "Apprentissage en cours...";;
 let lgr_a = Queue.length queue_a and lgr_b = Queue.length queue_b;;
