@@ -1,8 +1,9 @@
 print_endline "Exécution de la fft sur a.wav...";;
-let queue_a = Fft.queue_map (Fft.re_array_of_cplx_bigarray1_norm 8800000.) (Fft.main "./alphabet/a.wav");;
-Printf.printf "%d\n" (Queue.length queue_a);
+let queue_a = Fft.queue_map (Fft.re_array_of_cplx_bigarray1_norm 8800000.)
+(Fft.main "./alphabet/a.wav");;
 print_endline "Exécution de la fft sur b.wav...";;
-let queue_b = Fft.queue_map (Fft.re_array_of_cplx_bigarray1_norm 8800000.) (Fft.main "./alphabet/b.wav");;
+let queue_b = Fft.queue_map (Fft.re_array_of_cplx_bigarray1_norm 8800000.)
+(Fft.main "./alphabet/b.wav");;
 print_endline "Ffts effectuées.";;
 print_endline "Apprentissage en cours...";;
 let lgr_a = Queue.length queue_a and lgr_b = Queue.length queue_b;;
@@ -11,7 +12,7 @@ let lgr = lgr_a + lgr_b;;
 open Ajourbiais
 open Affichage
 
-let res=generation [|50;20;2|] 80;;
+let res=generation [|20;10;2|] 80;;
 
 let tab_couples=Array.make lgr ([||],[||]);;
 for i=0 to lgr_a-1 do
