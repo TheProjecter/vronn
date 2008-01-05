@@ -23,7 +23,7 @@ for i=0 to 25 do
   done
 done;;
 
-let tmp=super_train_log_eta res tab_couples 0.8 (600*100) sigmoide;;
+let tmp=super_train_log_eta res tab_couples 0.0001 (600*100) sigmoide;;
 
 let (_,l2)=tmp in affiche "./results/alphabet_erreur" (List.rev l2);;
 

@@ -177,9 +177,8 @@ let super_train_log_eta (res:reseau) tab_couples eta nb_test_max sigmoide=
       l2:=(!mistake)::(!l2);
       (*if abs (!mistake -. !last_erreur) <0.0000001 then anti_poids_nul res;*)
       (*go_on := abs (!mistake -. !last_erreur) >0.00001;(* si plus de modif arrete toi*)*)
-      if abs (!mistake -. !last_erreur) < 0.0001
-        then pas:=max (!pas *. 0.96) 0.1
-        else pas:=min (1.04 *. !pas) 2.;
+			let abs_diff_err = max (!mistake -. !last_erreur) (!last_erreur -. !mistake) in
+      pas:=max (min (!pas +. 0.000001 *. (0.01 /. abs_diff_err-. 100. *. abs_diff_err)) 5.) 0.0000001;
       Printf.printf "Le pas est %f\n" !pas;
       incr i;
       last_erreur := super_erreur res tab_couples;
