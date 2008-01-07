@@ -10,7 +10,7 @@ let dirhandle=Unix.opendir "alphabet2" in
 for i=1 to 3 do ignore (Unix.readdir dirhandle); done;
 for i=0 to nb_lettres-1 do
 	let filename=Unix.readdir dirhandle in Printf.printf "alphabet2/%s\n" filename;
-	queues.(i) <- Fft.queue_map (Fft.re_array_of_cplx_bigarray1_norm 8800000.) (Fft.spectre ("./alphabet/"^filename));
+	queues.(i) <- Fft.queue_map (Fft.re_array_of_cplx_bigarray1_norm 8800000.) (Fft.spectre ("./alphabet2/"^filename));
 	lgr.(i) <- Queue.length queues.(i)
 done;
 Unix.closedir dirhandle;;
