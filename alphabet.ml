@@ -1,24 +1,29 @@
 open Ajourbiais
 open Affichage
-let lgr=Array.make 26 0;;
-let queues = Array.make 26 (Queue.create ());;
+let nb_lettres = 4;;
+let lgr=Array.make nb_lettres 0;;
+let queues = Array.make nb_lettres (Queue.create ());;
 
 let int_to_ascii_string i = String.make 1 (char_of_int i);;
 
-for i=0 to 25 do
-queues.(i) <- Fft.queue_map (Fft.re_array_of_cplx_bigarray1_norm 8800000.) (Fft.spectre ("./alphabet/"^int_to_ascii_string(i+97)^".wav"));
-lgr.(i) <- Queue.length queues.(i)
-done;;
+let dirhandle=Unix.opendir "alphabet2" in
+for i=1 to 3 do ignore (Unix.readdir dirhandle); done;
+for i=0 to nb_lettres-1 do
+	let filename=Unix.readdir dirhandle in Printf.printf "alphabet2/%s\n" filename;
+	queues.(i) <- Fft.queue_map (Fft.re_array_of_cplx_bigarray1_norm 8800000.) (Fft.spectre ("./alphabet/"^filename));
+	lgr.(i) <- Queue.length queues.(i)
+done;
+Unix.closedir dirhandle;;
 
-let res=generation [|20;10;26|] 80;;
+let res=generation [|10;10;nb_lettres|] 80;;
 
 let tab_couples=Array.make (Array.fold_left (fun x y -> x+y) 0 lgr) ([||],[||]);;
 
 let j=ref 0 in
-for i=0 to 25 do
+for i=0 to nb_lettres-1 do
 	let fin = !j + lgr.(i) in
   while !j < fin do
-   tab_couples.(!j) <- Queue.pop queues.(i),Array.init 26 (fun k -> if k=i then 0.95 else 0.05);
+   tab_couples.(!j) <- Queue.pop queues.(i),Array.init nb_lettres (fun k -> if k=i then 0.95 else 0.05);
 	 incr j
   done
 done;;
