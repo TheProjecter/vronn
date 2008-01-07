@@ -1,6 +1,6 @@
 open Ajourbiais
 open Affichage
-let nb_lettres = 4;;
+let nb_lettres = 5;;
 let lgr=Array.make nb_lettres 0;;
 let queues = Array.make nb_lettres (Queue.create ());;
 
@@ -15,7 +15,7 @@ for i=0 to nb_lettres-1 do
 done;
 Unix.closedir dirhandle;;
 
-let res=generation [|10;10;nb_lettres|] 80;;
+let res=generation [|10;10;nb_lettres|] 110;;
 
 let tab_couples=Array.make (Array.fold_left (fun x y -> x+y) 0 lgr) ([||],[||]);;
 
