@@ -1,12 +1,15 @@
+(* Sys.readdir : string -> string array, renvoit les fichiers dans le dossier nomme *)
+(* Unix.select : a voir, pour le polling, changer pas avec +/-, neato thing to do... *)
+
 open Ajourbiais
 open Affichage
-let nb_lettres = 5;;
+let nb_lettres = 10;;
 let lgr=Array.make nb_lettres 0;;
 let queues = Array.make nb_lettres (Queue.create ());;
 
 let int_to_ascii_string i = String.make 1 (char_of_int i);;
 
-let dirhandle=Unix.opendir "alphabet2" in
+(*let dirhandle=Unix.opendir "alphabet2" in
 for i=1 to 3 do ignore (Unix.readdir dirhandle); done;
 for i=0 to nb_lettres-1 do
 	let filename=Unix.readdir dirhandle in Printf.printf "alphabet2/%s\n" filename;
@@ -14,6 +17,14 @@ for i=0 to nb_lettres-1 do
 	lgr.(i) <- Queue.length queues.(i)
 done;
 Unix.closedir dirhandle;;
+*)
+
+let files = Sys.readdir "alphabet2" in
+Array.sort compare files;
+for i=0 to nb_lettres-1 do
+ queues.(i) <- Fft.queue_map (Fft.re_array_of_cplx_bigarray1_norm 8800000.) (Fft.spectre ("./alphabet2/"^files.(i+1)));
+  lgr.(i) <- Queue.length queues.(i)
+done;;
 
 let res=generation [|10;10;nb_lettres|] 110;;
 
@@ -28,7 +39,7 @@ for i=0 to nb_lettres-1 do
   done
 done;;
 
-let tmp=super_train_log_eta res tab_couples 0.0001 (600*100) sigmoide;;
+let tmp=super_train_log_eta res tab_couples 0.000001 (600*100) sigmoide;;
 
 let (_,l2)=tmp in affiche "./results/alphabet_erreur" (List.rev l2);;
 

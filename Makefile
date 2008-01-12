@@ -22,10 +22,10 @@ clean:
 clean-results:
 	rm -f resultsonth2.png results/*
 
-maintainerclean: clean clean-results
+distclean: clean clean-results
 	rm -f fft.out struct_sontheorique2
 
-distclean: maintainerclean
+maintainerclean: distclean
 
 test:
 	rm -f *.o *.cm* *~ *.a
