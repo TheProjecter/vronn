@@ -177,8 +177,10 @@ let super_train_log_eta (res:reseau) tab_couples eta nb_test_max sigmoide=
       l2:=(!mistake)::(!l2);
       (*if abs (!mistake -. !last_erreur) <0.0000001 then anti_poids_nul res;*)
       (*go_on := abs (!mistake -. !last_erreur) >0.00001;(* si plus de modif arrete toi*)*)
-			let abs_diff_err = max (!mistake -. !last_erreur) (!last_erreur -. !mistake) in
-      pas:=max (min (!pas +. 0.000001 *. (0.01 /. abs_diff_err-. 100. *. abs_diff_err)) 5.) 0.0000001;
+			(let changepas,_,_=Unix.select [Unix.stdin] [] [] 0. in
+      match changepas with | something::_ -> let buf=String.make 1 ' ' in (ignore (Unix.read something buf 0 1); match buf.[0] with | '+' -> pas := 2. *. !pas | '-' -> pas := 0.5 *. !pas | _ -> ())
+			|[] -> let abs_diff_err = max (!mistake -. !last_erreur) (!last_erreur -. !mistake) in
+      pas:=max (min (!pas +. 0.000001 *. (0.01 /. abs_diff_err-. 100. *. abs_diff_err)) 5.) 0.0000001);
       Printf.printf "Le pas est %f\n" !pas;
       incr i;
       last_erreur := super_erreur res tab_couples;
