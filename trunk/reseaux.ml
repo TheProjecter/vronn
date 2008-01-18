@@ -140,22 +140,6 @@ let super_erreur res tab_couples (* valable pour tout type de reseau*)=
 	!erreur2 /. (float_of_int n);
 ;;
 
-(* anti_poids_nul n'est pas utilisé mais est présent en commentaire dans
- * super_train_log_eta et donc je ne déplace pas cette fonction à la fin du
- * fichier mais je la mets tout de même en commentaire
- *
- * let anti_poids_nul res= (*permet de sauver les meubles si les poids deviennent nuls mais fait bcp remonter lerreur*)
-  for bob=0 to Array.length res -1 do
-    for neur=0 to Array.length res.(bob) -1 do
-      for w=0 to Array.length res.(bob).(neur).poids -1 do
-        if res.(bob).(neur).poids.(w) < 0.000000000001
-          then (res.(bob).(neur).poids.(w) <- (Random.float 1.) -. 0.5 ; Printf.printf "correction poids nul  faite\n")
-      done
-    done
-  done
-;;
-*)
-
 let super_train_log_eta (res:reseau) tab_couples eta nb_test_max sigmoide=
   let pas=ref eta in
   let mistake=ref (super_erreur res tab_couples) in
@@ -182,7 +166,7 @@ let super_train_log_eta (res:reseau) tab_couples eta nb_test_max sigmoide=
 					match changepas with 
 					| something::_ -> let buf=String.make 1 ' ' in (ignore (Unix.read something buf 0 1); match buf.[0] with | '+' -> pas := 2. *. !pas | '-' -> pas := 0.5 *. !pas | _ -> ())
 					|[] -> let abs_diff_err = max (!mistake -. !last_erreur) (!last_erreur -. !mistake) in
-						pas:=max (min (!pas +. 0.000001 *. (0.01 /. abs_diff_err-. 100. *. abs_diff_err)) 0.05) 0.0000001;
+						pas:=max (min (!pas *. (1. -. 0.001 *. (0.01 /. abs_diff_err-. 100. *. abs_diff_err))) 0.05) 0.0000001;
 						failwith "test";
 			done; with Failure "test"-> ());
       Printf.printf "Le pas est %f\n" !pas;
@@ -249,133 +233,29 @@ let load_struct file=
 	(reseau:reseau)
 ;;
 
-
-(*
-let save_struct reseau file=
-  let out_channel=open_out file in
-  let _=Marshal.to_channel out_channel reseau [] in
-  close_out out_channel
-
-let load_struct file=
-  let in_channel=open_in file in
-  let reseau=Marshal.from_channel in_channel in
-  let _=close_in in_channel in
-  reseau
-*)
-
-
-
-  (* toutes ces fonctions ne devraient plus servir ; on les garde "parce que",
-   * ensuite on les déplace dans un autre fichier et pour finir, on les dégage
-   * =) *)
-
-(*
-let scan_int () = Scanf.scanf " %d" (fun x -> x)
-*)
-
-
-(* Le commentaire suivant était situé juste en dessous de la définition de
- * propagation ; on a du le laisser parce qu'il y avait marqué "important" mais
- * je n'ai pas trouvé de chose de la forme di= oi(1-oi)(ci-oi) dans propagation,
- * d'où le déplacement
-(*important !!*)
-
-(*di = oi(1-oi)(ci-oi)
-	cette formule vient d'une formule du calcul de la derivée dela sigmoide
-	cf http://www.grappa.univ-lille3.fr/polys/apprentissage/sortie005.html#toc12 *)
-
-*)
-
-
-(*
-let test res tab_couples= (* !! valable seulement pour un neurone sur la couche de sortie*)
-	let p1,d1=tab_couples.(0) in 
-	let p,d=ref p1,ref d1 in
-	let n=Array.length tab_couples in
-	let m=Array.length res in
-	let bob=Array.make (Array.length res.(m-1) ) 0. in
-	for i=0 to  n -1 do
-		p := fst tab_couples.(i);
-		d := snd tab_couples.(i);
-		propagation !p res sigmoide;
-		for k=0 to Array.length res.(m -1)  -1 do
-			bob.(k) <- res.(m-1).(k).sortie
-		done;
-		Printf.printf "entrees        :";
-		printf_tab !p;
-		Printf.printf "sortie desiree :";
-		printf_tab !d;
-		Printf.printf "sortie reelles :";
-		printf_tab bob;
-		Printf.printf "\n----------------------------------\n";
+let sortie reseau =
+	let n= Array.length reseau -1 in
+	let sortie = Array.make (Array.length reseau.(n)) 0. in
+	for i=0 to Array.length reseau.(n) -1 do
+    sortie.(i) <- reseau.(n).(i).sortie
 	done;
+	sortie
+;;		
+
+type hyper_reseau = {nom: string; reseau: reseau; test: (float array -> int) ;suite: hyper_reseau array};;
+
+let rec hpropa {nom=nom; reseau=reseau; test=test; suite=suite} entrees sigmoide noms=
+	propagation entrees reseau sigmoide;
+	match suite with
+	| [||] -> (nom::noms)
+	| _ -> hpropa suite.(test (sortie reseau)) entrees sigmoide (nom::noms)
 ;;
-*)
 
-
-(*
-let train (res:reseau) tab_couples eta nb_test_max sigmoide=
-  let mistake=ref 0. in
-  let i=ref 0 in
-  while !i<= 100 && !mistake <> (erreur res tab_couples) do	
-    mistake := erreur res tab_couples;
-    Printf.printf "%f\n" (!mistake);
-    entrainement res tab_couples eta (nb_test_max/100) sigmoide;
-    incr i;
-  done;
-  Printf.printf "au bout de: %d\n" (!i*nb_test_max/100);
-;;
-*)
-
-
-(*let erreur res tab_couples= (* !! valable seulement pour un neurone sur la couche de sortie*)
-	let abs x=
-		if x>0. then x else -.x in
-	let p1,d1=tab_couples.(0) in 
-	let p,d=ref p1,ref d1 in
-	let n=Array.length tab_couples in
-	let erreur =ref 0. in
-	for i=0 to  n -1 do
-		p := fst tab_couples.(i);
-		d := snd tab_couples.(i);
-		propagation !p res sigmoide;
-		erreur := !erreur +. (abs (!d.(0)-. res.(Array.length res -1).(0).sortie));
+let rec hgen (nom,taille,test,suite) taille_entree =
+	let suite_res = Array.make (Array.length suite) {nom=""; reseau=[||]; test=(fun _-> 0); suite=[||]} in
+	for i=0 to Array.length suite -1 do
+		suite_res.(i) <- hgen suite.(i) taille_entree
 	done;
-	!erreur /. (float_of_int n);
+	{nom=nom; reseau=(generation taille taille_entree); test=test; suite=suite_res}
 ;;
-*)
-
-
-(* old version, never use again
-let super_train_log (res:reseau) tab_couples eta nb_test_max sigmoide=(*pseudo logarithmique, sert juste a mieux visualiser la pente initiale*)
-  let pas=ref eta in
-  let mistake=ref 1. in
-  let last_erreur=ref 1. in
-  let i=ref 0 in
-  let go_on=ref true in
-  let l1,l2=ref [],ref [] in
-  Sys.catch_break true;
-  let out_channel_disque=open_out "../results/fur_et_à_mesure" in
-  try
-    while !go_on && (*!i<= 1000000 &&*) !last_erreur > 0.001(*ceci est la borne sup
-    des erreurs acceptées*) && !i < nb_test_max do
-          (*Printf.printf "%f\n" (!mistake);*)
-          entrainement res tab_couples !pas (10000) sigmoide;
-          mistake := super_erreur res tab_couples;
-          (match !i mod 4 with 0->Printf.printf "-" |1->Printf.printf "\\" | 2->Printf.printf "|" | _->Printf.printf "/" );
-          l1:=(!i)::(!l1);
-          l2:=(!mistake)::(!l2);
-          Printf.fprintf out_channel_disque "%010d %9f\n" !i !mistake;
-          (*if abs (!mistake -. !last_erreur) <0.0000001 then anti_poids_nul res;*)
-          (*go_on := abs (!mistake -. !last_erreur) >0.00001;(* si plus de modif arrete toi*)*)
-          incr i;
-          last_erreur := super_erreur res tab_couples;
-          flush stdout;
-    done;
-    Printf.printf "au bout de: %d\n" (!i*3000);
-    (!l1,!l2)
-  with Sys.Break -> Printf.printf "au bout de: %d\n" (!i*3000);
-    (!l1,!l2)
-;;
-*)
 
