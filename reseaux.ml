@@ -18,7 +18,7 @@ let abs x=
   if x>0. then x else -.x;;
 
 
-let propagation entree (res:reseau) sigmoide=
+(*let propagation entree (res:reseau) sigmoide=
   let m=Array.length res in
   for neur=0 to Array.length res.(0) -1 do
     t:=0.;
@@ -43,7 +43,25 @@ let propagation entree (res:reseau) sigmoide=
       res.(couche).(neur).sortie <- sigmoide res.(couche).(neur).activation
     done
   done
-;;
+;;*)
+
+
+let propagation entree reseau sigmoide =
+  let somme_pond entree coeffs =
+    Array.fold_left (+.) 0.
+      (Array.mapi (fun i v -> v *. coeffs.(i)) entree) in
+ 
+  let gere_couche couche entree =
+    let rajout_biais i neur =
+      let activation = somme_pond entree neur.poids -. neur.poids.(Array.length entree) in
+      neur.activation <- activation;
+      neur.sortie <- sigmoide activation in
+    Array.iteri rajout_biais couche in
+ 
+  Array.iteri
+    (fun i couche -> gere_couche couche
+       (if i = 0 then entree else reseau.(i-1)))
+    reseau
 
 
 let calcul_sensib (res:reseau) entree sortie eta=
