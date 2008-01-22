@@ -49,7 +49,7 @@ let abs x=
 let propagation entree reseau sigmoide =
   let somme_pond entree coeffs =
     Array.fold_left (+.) 0.
-      (Array.mapi (fun i v -> v *. coeffs.(i)) entree) in
+      (Array.mapi (fun i v -> v.sortie *. coeffs.(i)) entree) in
  
   let gere_couche couche entree =
     let rajout_biais i neur =
@@ -60,7 +60,7 @@ let propagation entree reseau sigmoide =
  
   Array.iteri
     (fun i couche -> gere_couche couche
-       (if i = 0 then entree else reseau.(i-1)))
+       (if i = 0 then Array.map (fun x -> {sortie=x; poids=[||]; activation = 0.; sensib=0.}) entree else reseau.(i-1)))
     reseau
 
 
