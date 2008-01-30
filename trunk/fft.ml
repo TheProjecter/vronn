@@ -37,10 +37,10 @@ and riff_chunk=[
   input_string 4, "type", Some (type_of_riff_chunk);
 ]
 
-let moyenne_des_canaux profondeur nombre_de_canaux in_channel=
+let moyenne_des_canaux alignement nombre_de_canaux in_channel=
   let placeholder=ref 0. in
   for i=0 to nombre_de_canaux-1 do
-    placeholder:=!placeholder+.float ((int_of_I (read_ui8n profondeur in_channel))/nombre_de_canaux)
+    placeholder:=!placeholder+.float ((int_of_I (read_ui8n alignement in_channel))/nombre_de_canaux)
   done;
   !placeholder
 
@@ -52,7 +52,7 @@ let creation_des_echantillons fichier=
   * calcul de certaines autres à partir de celles-ci *)
   let dt=10 in (* millisecondes *)
   let echantillonage=(valeur "sample_rate") in 
-  let profondeur=(valeur "significant_bits_per_sample")/8 in 
+	let alignement=valeur "block_align" in
   let nombre_de_canaux=(valeur "number_of_channels") in 
   let echantillons_par_dt=echantillonage*dt/1000 in 
   let bits_par_dt=(valeur "significant_bits_per_sample")*echantillons_par_dt in 
@@ -69,7 +69,7 @@ let creation_des_echantillons fichier=
   let bigarray_courante=Bigarray.Array1.create Bigarray.complex64 Bigarray.c_layout echantillons_par_dt in
   for i=0 to paquets_d'echantillons-1 do
     for j=0 to echantillons_par_dt-1 do
-      bigarray_courante.{j} <- {Complex.re=(moyenne_des_canaux profondeur nombre_de_canaux in_channel); Complex.im=0.}
+      bigarray_courante.{j} <- {Complex.re=(moyenne_des_canaux alignement nombre_de_canaux in_channel); Complex.im=0.}
     done;
     Queue.add bigarray_courante queue_des_echantillons 
   done;
