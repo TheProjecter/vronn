@@ -1,0 +1,36 @@
+.PHONY: clean clean-results distclean
+# Use the byte-code compiler
+BYTE_ENABLED = false
+NATIVE_ENABLED = true
+
+OCAMLFLAGS += -rectypes -unsafe
+OCAMLOPTFLAGS += -ffast-math -inline 2
+
+USE_OCAMLFIND = true
+
+OCAMLPACKS[] =
+	unix
+	graphics
+	fftw
+	fftw2
+	camlimages
+
+OCamlLibrary(BinaryParse,BinaryParse)
+OCamlLibrary(fft,fft)
+OCAML_LIBS = BinaryParse fft
+
+
+# Build the program
+OCamlProgram(run/notes, affichage reseaux notes)
+.DEFAULT: run/notes.opt
+
+clean:
+  rm -f *.o *.cm* *~ run/* *.a
+
+clean-results:
+  rm -f resultsonth2.png results/*
+
+distclean: clean clean-results
+  rm -f fft.out struct_sontheorique2
+
+maintainerclean: distclean
