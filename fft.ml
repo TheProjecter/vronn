@@ -40,13 +40,13 @@ and riff_chunk=[
 let moyenne_des_canaux alignement nombre_de_canaux in_channel=
   let placeholder=ref 0. in
   for i=0 to nombre_de_canaux-1 do
-    placeholder:=!placeholder+.float ((int_of_I (read_ui8n alignement in_channel))/nombre_de_canaux)
+    placeholder:=!placeholder+.float (int_of_I (read_ui8n (alignement/nombre_de_canaux) in_channel)/nombre_de_canaux)
   done;
   !placeholder
 
 let creation_des_echantillons fichier=
-  let in_channel,header_parse=header_parse (open_in_bin fichier) riff_chunk in 
-  let valeur nom=int_of_I (Hashtbl.find header_parse nom) in 
+  let in_channel,parsed_header=header_parse (open_in_bin fichier) riff_chunk in 
+  let valeur nom=int_of_I (Hashtbl.find parsed_header nom) in 
 
   (* récupération des valeurs stockées dans la table de hachage et 
   * calcul de certaines autres à partir de celles-ci *)
@@ -56,13 +56,13 @@ let creation_des_echantillons fichier=
   let nombre_de_canaux=(valeur "number_of_channels") in 
   let echantillons_par_dt=echantillonage*dt/1000 in 
   let bits_par_dt=(valeur "significant_bits_per_sample")*echantillons_par_dt in 
-  let paquets_d'echantillons=(valeur "data_length")*8/bits_par_dt in 
-  (* debug: affiche toutes les valeurs stockées dans la table de hachage
-    * let prnt a=function
+  let paquets_d'echantillons=(valeur "data_length")*8/(bits_par_dt*nombre_de_canaux) in
+  (* debug: affiche toutes les valeurs stockées dans la table de hachage *)
+  (*let prnt a=function
     |S s -> Printf.printf "%s : %s" a s; print_endline ""
     |I i -> Printf.printf "%s : %d" a i; print_endline ""
   in
-  let _=Hashtbl.iter prnt header_parsé in
+  let _=Hashtbl.iter prnt parsed_header in
   let _=print_endline (string_of_int paquets_d'echantillons) in
   *)
   let queue_des_echantillons=Queue.create () in 

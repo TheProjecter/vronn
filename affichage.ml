@@ -15,9 +15,9 @@ let affiche file list =
 	and outchan = open_out file in
 	let rec affR lst =
 		match lst with
-                  |[]->assert false
-		  |[t]-> let y,x = int_of_float (1000. *. t),!curx+5 in segment img (!curx,!cury) (x,y) ; curx:=x; cury:=y ; Printf.fprintf outchan "%f" t
-                  |t::q-> let y,x = int_of_float (1000. *. t),!curx+5 in segment img (!curx,!cury) (x,y) ; curx:=x; cury:=y ; Printf.fprintf outchan "%f;" t; affR q
+      |[]->print_endline "Nothing done"
+		  |[t]-> let y,x = int_of_float (1000. *. t) + 10,!curx+5 in segment img (!curx,!cury) (x,y) ; curx:=x; cury:=y ; Printf.fprintf outchan "%f" t
+      |t::q-> let y,x = int_of_float (1000. *. t) + 10,!curx+5 in segment img (!curx,!cury) (x,y) ; curx:=x; cury:=y ; Printf.fprintf outchan "%f;" t; affR q
 	in let b,a=(int_of_float (List.hd list *. 1000.)),10 in curx:=a; cury:=b; affR (List.tl list);
 close_out outchan;
   Images.save (file ^ ".png") None [] (Images.Rgb24 img)
