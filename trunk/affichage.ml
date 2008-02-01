@@ -5,7 +5,7 @@ let rec segment img ((x1,y1) as p1) ((x2,y2) as p2) =
 
 let rec maxtaille lst = 
 match lst with
-	|[]->assert false
+	|[]-> assert false
 	| [t] -> t,1
 	| t::q-> let om,ot=maxtaille q in max t om,ot+1
 
