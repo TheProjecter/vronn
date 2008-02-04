@@ -50,11 +50,11 @@ let creation_des_echantillons fichier=
 
   (* récupération des valeurs stockées dans la table de hachage et 
   * calcul de certaines autres à partir de celles-ci *)
-  let dt=10 in (* millisecondes *)
+  let dt=100 in (* millisecondes *)
   let echantillonage=(valeur "sample_rate") in 
 	let alignement=valeur "block_align" in
   let nombre_de_canaux=(valeur "number_of_channels") in 
-  let echantillons_par_dt=echantillonage*dt/1000 in 
+  let echantillons_par_dt=(echantillonage*dt)/1000 in 
   let bits_par_dt=(valeur "significant_bits_per_sample")*echantillons_par_dt in 
   let paquets_d'echantillons=(valeur "data_length")*8/(bits_par_dt*nombre_de_canaux) in
   (* debug: affiche toutes les valeurs stockées dans la table de hachage *)
@@ -101,3 +101,8 @@ let spectre fichier=
 
 let re_array_of_cplx_bigarray1_norm norm bigarray=
   Array.init (Bigarray.Array1.dim bigarray) (function i->bigarray.{i}.Complex.re /. norm)
+
+let array_of_res_norm_moy norm moy bigarray =
+  let n= Bigarray.Array1.dim bigarray in
+  Array.init (n / moy) (function i -> (let sum = ref 0. in for j=moy*i to max (moy*(i+1)) n -1 do sum := !sum +. bigarray.{j}.Complex.re; done; !sum /. norm))
+
