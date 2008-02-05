@@ -104,5 +104,5 @@ let re_array_of_cplx_bigarray1_norm norm bigarray=
 
 let array_of_res_norm_moy norm moy bigarray =
   let n= Bigarray.Array1.dim bigarray in
-  Array.init (n / moy) (function i -> (let sum = ref 0. in for j=moy*i to max (moy*(i+1)) n -1 do sum := !sum +. bigarray.{j}.Complex.re; done; !sum /. norm))
+  Array.init (n / moy) (function i -> (let sum = ref 0. in for j=moy*i to min (moy*(i+1)) n -1 do sum := !sum +. bigarray.{j}.Complex.re; done; !sum /. norm))
 
