@@ -37,7 +37,7 @@ let compose elem str =
 let tri elems j = 
 	if List.mem j elems then 0.95 else 0.05
 	
-let res=generation [|8;5;nb_tri|] (Array.length (Queue.peek queues.(0)));;
+let res=generation [|10;8;nb_tri|] (Array.length (Queue.peek queues.(0)));;
 
 let tab_couples=Array.make (Array.fold_left (fun x y -> x+y) 0 lgr) ([||],[||]);;
 let j=ref 0 in
