@@ -1,6 +1,6 @@
 open Reseaux
 open Affichage
-let nb_notes = 9;;
+let nb_notes = 10;;
 let nb_tri = 7;;
 let lgr=Array.make nb_notes 0;;
 let queues = Array.make nb_notes (Queue.create ());;
@@ -12,12 +12,12 @@ let ordre str1 str2 = match compare (String.length str1) (String.length str2) wi
 in
 Array.sort ordre files;
 for i=0 to nb_notes-1 do
-  queues.(i) <- Fft.queue_map (Fft.array_of_res_norm_moy 880000000. 20) (Fft.spectre ("./temp/"^files.(i+1)));
-	let n= Queue.length queues.(i) in
+  queues.(i) <- Fft.queue_map (Fft.array_of_res_norm_moy 880000. 100) (Fft.spectre ("./temp/"^files.(i+1)));
+(*	let n= Queue.length queues.(i) in
 	for j = 0 to n / 4 do ignore (Queue.pop queues.(i)) done;
 	let temp = Queue.create () in
 	for j = 0 to n / 2 do Queue.push (Queue.pop queues.(i)) temp done;
-	queues.(i) <- temp;
+	queues.(i) <- temp; *)
   lgr.(i) <- Queue.length queues.(i)
 done;;
 
@@ -37,7 +37,8 @@ let compose elem str =
 let tri elems j = 
 	if List.mem j elems then 0.95 else 0.05
 	
-let res=generation [|10;8;nb_tri|] (Array.length (Queue.peek queues.(0)));;
+let res=generation [|nb_tri * 3;nb_tri * 2;nb_tri|] (Array.length (Queue.peek queues.(0)));;
+(* load_struct "./results/notes_struct";; *)
 
 let tab_couples=Array.make (Array.fold_left (fun x y -> x+y) 0 lgr) ([||],[||]);;
 let j=ref 0 in
@@ -61,9 +62,9 @@ for i=0 to nb_notes-1 do
 done;;
 
 
-let tmp=super_train_log_eta res tab_couples 0.01 (6000) sigmoide;;
+let tmp=super_train_log_eta res tab_couples 0.01 (6000);;
 
-let (_,l2)=tmp in affiche "./results/notes_erreur" (List.rev l2);;
+let (_,l2)=tmp in if List.length l2 < 800 then affiche "./results/notes_erreur" (List.rev l2) else Printf.printf "Trop d'erreurs à afficher...\n";;
 
 (* test res tab_couples;;*)
 

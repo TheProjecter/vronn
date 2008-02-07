@@ -18,7 +18,7 @@ let abs x=
   if x>0. then x else -.x;;
 
 
-let propagation entree (res:reseau) sigmoide=
+let propagation entree (res:reseau)=
   let m=Array.length res in
   for neur=0 to Array.length res.(0) -1 do
     t:=0.;
@@ -45,8 +45,19 @@ let propagation entree (res:reseau) sigmoide=
   done
 ;;
 
+let propa entrees reseau =
+	propagation entrees reseau;
+	let lastlayer = reseau.(Array.length reseau -1) in
+	let n= Array.length lastlayer in
+	let res = Array.make n 0. in
+	for i=0 to n-1 do
+		res.(i) <- lastlayer.(i).sortie
+	done;
+	res
+;;
+
 (*
-let propagation entree reseau sigmoide =
+let propagation entree reseau =
   let somme_pond entree coeffs =
     Array.fold_left (+.) 0.
       (Array.mapi (fun i v -> v.sortie *. coeffs.(i)) entree) in
@@ -128,14 +139,14 @@ let generation (nb_neurone_par_couche:int array) taille_entree=
   (reseau:reseau)
 ;;
 
-let entrainement (reseau:reseau) tab_couples eta nb_test_max sigmoide=
+let entrainement (reseau:reseau) tab_couples eta nb_test_max=
 	let n=Array.length tab_couples  in 
 	let p1,d1=tab_couples.(0) in 
 	let p,d=ref p1,ref d1 in
 	for i=0 to nb_test_max do
 		p := fst tab_couples.(i mod n);
 		d := snd tab_couples.(i mod n);
-		propagation !p reseau sigmoide;
+		propagation !p reseau;
 		calcul_sensib reseau !p !d eta;
 	done
 ;;
@@ -151,7 +162,7 @@ let super_erreur res tab_couples (* valable pour tout type de reseau*)=
 		erreur:=0.;
 		p := fst tab_couples.(i);
 		d := snd tab_couples.(i);
-		propagation !p res sigmoide;
+		propagation !p res;
 		for j=0 to Array.length (res.(long_res -1)) -1 do
 			let tmp= abs (!d.(j)-. res.(long_res -1).(j).sortie)  in
 			erreur := !erreur +. (tmp *. tmp);
@@ -161,7 +172,7 @@ let super_erreur res tab_couples (* valable pour tout type de reseau*)=
 	!erreur2 /. (float_of_int n);
 ;;
 
-let super_train_log_eta (res:reseau) tab_couples eta nb_test_max sigmoide=
+let super_train_log_eta (res:reseau) tab_couples eta nb_test_max=
   let pas=ref eta in
   let mistake=ref (super_erreur res tab_couples) in
   let last_erreur=ref !mistake in
@@ -174,7 +185,7 @@ let super_train_log_eta (res:reseau) tab_couples eta nb_test_max sigmoide=
   try
     while !go_on && !last_erreur > 0.00001 (*ceci est la borne sup des erreurs acceptées*) && !i < nb_test_max do
       Printf.printf "%.16f\n" (!mistake);
-      entrainement res tab_couples !pas (saut) sigmoide;
+      entrainement res tab_couples !pas (saut);
       mistake := super_erreur res tab_couples;
       Printf.fprintf log_c "%d %f\n" !i !mistake;
       (match !i mod 4 with 0->Printf.printf "-" |1->Printf.printf "\\" | 2->Printf.printf "|" | _->Printf.printf "/" );
@@ -265,11 +276,11 @@ let sortie reseau =
 
 type hyper_reseau = {nom: string; reseau: reseau; test: (float array -> int) ;suite: hyper_reseau array};;
 
-let rec hpropa {nom=nom; reseau=reseau; test=test; suite=suite} entrees sigmoide noms=
-	propagation entrees reseau sigmoide;
+let rec hpropa {nom=nom; reseau=reseau; test=test; suite=suite} entrees noms=
+	propagation entrees reseau;
 	match suite with
 	| [||] -> (nom::noms)
-	| _ -> hpropa suite.(test (sortie reseau)) entrees sigmoide (nom::noms)
+	| _ -> hpropa suite.(test (sortie reseau)) entrees (nom::noms)
 ;;
 
 let rec hgen (nom,taille,test,suite) taille_entree =
