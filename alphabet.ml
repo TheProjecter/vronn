@@ -43,7 +43,7 @@ for i=0 to nb_lettres-1 do
   done
 done;;
 
-let tmp=super_train_log_eta res tab_couples 0.000001 (600*100) sigmoide;;
+let tmp=super_train_log_eta res tab_couples 0.000001 (600*100);;
 
 let (_,l2)=tmp in affiche "./results/alphabet_erreur" (List.rev l2);;
 

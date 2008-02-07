@@ -9,7 +9,7 @@ Printf.printf "Le Xor biaise :) \n\n";;
 Sys.catch_break true;
 
 (try
-ignore (super_train_log_eta res  tab_couples 0.05 300000 sigmoide)
+ignore (super_train_log_eta res  tab_couples 0.05 300000)
 with
 |Sys.Break -> ());;
 

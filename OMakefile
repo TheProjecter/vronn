@@ -17,12 +17,15 @@ OCAMLPACKS[] =
 
 OCamlLibrary(BinaryParse,BinaryParse)
 OCamlLibrary(fft,fft)
-OCAML_LIBS = BinaryParse fft
+OCamlLibrary(affichage,affichage)
+OCamlLibrary(reseaux,reseaux)
+OCAML_LIBS = BinaryParse fft affichage reseaux
 
 
 # Build the program
-OCamlProgram(run/notes, affichage reseaux notes)
-.DEFAULT: run/notes.opt
+OCamlProgram(run/notes, notes)
+OCamlProgram(run/reforme, reforme)
+.DEFAULT: run/notes.opt run/reforme.opt
 
 clean:
   rm -f *.o *.cm* *~ run/* *.a
