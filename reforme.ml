@@ -12,6 +12,10 @@ let notes = Queue.create ()
 let files = Sys.readdir "./temp/"
 
 let _=
+	let ordre str1 str2 = match compare (String.length str1) (String.length str2) with
+  |0 -> compare str1 str2
+  |i -> i
+	in Array.sort ordre files;
 	for i= 0 to lgr-1 do
 		let t=propa (Queue.pop queue) res and lst = ref [] in
 		for j = 0 to n-1 do
