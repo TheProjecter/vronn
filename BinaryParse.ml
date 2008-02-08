@@ -3,6 +3,12 @@ exception A_implementer of string
 type value=S of string | I of int
 and gen_fct= ((string, value) Hashtbl.t -> ((in_channel -> value) * string * gen_fct option) list)
 
+type bc = {
+	ic : in_channel;
+	mutable nbits : int;
+	mutable bits : int;
+}
+
 (* several reading functions *)
 
 let little_endian_read_ui16 in_channel=
@@ -38,6 +44,52 @@ let big_endian_read_ui8n n ic=
     |2->I (big_endian_read_ui16 ic)
     |4->I (big_endian_read_ui32 ic)
     |n->raise  (A_implementer ("read_ui8"^(string_of_int n)^"\n"))
+
+let rec little_endian_read_bits b n=
+  if b.nbits >= n then
+    let c = b.nbits - n in
+    let k = (b.bits asr c) land ((1 lsl n) - 1) in
+    b.nbits <- c;
+    k
+  else
+    let k = input_byte b.ic in
+    if b.nbits >= 24 then
+      let c = 8 + b.nbits - n in
+      let d = b.bits land ((1 lsl b.nbits) - 1) in
+      let d = (d lsl (8 - c)) lor (k lsr c) in
+      b.bits <- k;
+      b.nbits <- c;
+      d
+    else begin
+      b.bits <- (b.bits lsl 8) lor k;
+      b.nbits <- b.nbits + 8;
+      little_endian_read_bits b n;
+    end
+
+let rec big_endian_read_bits b n=
+  if b.nbits >= n then
+    let c = b.nbits - n in
+    let k = (b.bits asr c) land ((1 lsl n) - 1) in
+    b.nbits <- c;
+    k
+  else
+    let k = input_byte b.ic in
+    if b.nbits >= 24 then
+      let c = 8 + b.nbits - n in
+      let d = b.bits land ((1 lsl b.nbits) - 1) in
+      let d = (d lsl (8 - c)) lor (k lsr c) in
+      b.bits <- k;
+      b.nbits <- c;
+      d
+    else begin			
+      b.bits <- (b.bits lsl 8) lor k;
+      b.nbits <- b.nbits + 8;
+      big_endian_read_bits b n;
+    end
+
+let little_endian_read_uin n ic=I (little_endian_read_bits {ic=ic; bits=0; nbits=0} n)
+
+let big_endian_read_uin n ic=I (big_endian_read_bits {ic=ic; bits=0; nbits=0} n)
 
 (* real start *)
 

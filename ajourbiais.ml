@@ -163,11 +163,11 @@ let super_train_log_eta (res:reseau) tab_couples eta nb_test_max sigmoide=
   let i=ref 0 in
   let go_on=ref true in
   let l1,l2=ref [],ref [] in
-  let saut=4000 in
+  let saut=8000 in
   let log_c=open_out_bin "./results/pour_gnuplot.txt" in
   Sys.catch_break true;
   try
-    while !go_on && !last_erreur > 0.00001 (*ceci est la borne sup des erreurs acceptées*) && !i < nb_test_max do
+    while !go_on (*&& !last_erreur > 0.00001 *)(*ceci est la borne sup des erreurs acceptées*) && !i < nb_test_max do
       Printf.printf "%.16f\n" (!mistake);
       entrainement res tab_couples !pas (saut) sigmoide;
       mistake := super_erreur res tab_couples;
