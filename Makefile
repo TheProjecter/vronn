@@ -1,3 +1,4 @@
+
 opt: BinaryParse.cmxa
 	ocamlopt.opt -unsafe -ffast-math -inline 2 unix.cmxa -rectypes BinaryParse.cmxa bigarray.cmxa -I +site-lib/fftw2 fftw2.cmxa -cclib -lfftw -cclib -lrfftw -cclib -lm fft.ml -I +camlimages ci_core.cmxa graphics.cmxa ci_graphics.cmxa ci_png.cmxa affichage.ml ajourbiais.ml alphabet.ml -o run/alphabet
 
