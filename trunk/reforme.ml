@@ -1,6 +1,6 @@
 open Reseaux
 
-let queue = Fft.queue_map (Fft.array_of_res_norm_moy 880000. 100) (Fft.spectre ("./temp/5do.wav"))
+let queue = Fft.queue_map (Fft.array_of_res_norm_moy 880000. 100) (Fft.spectre ("./court.wav"))
 let lgr = Queue.length queue
 
 let res=load_struct "./results/notes_struct"
@@ -9,7 +9,7 @@ let n = Array.length res.(Array.length res -1)
 
 let notes = Queue.create ()
 
-let files = Sys.readdir "./temp/"
+let files = Sys.readdir "./notes/"
 
 let _=
 	let ordre str1 str2 = match compare (String.length str1) (String.length str2) with
