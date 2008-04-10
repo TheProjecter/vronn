@@ -1,10 +1,10 @@
 open Reseaux
 
-let seuil = 0.1
+let seuil = 0.5
 
-let queue = 
-	let t = Fft.queue_map (Fft.array_of_res_norm_moy 8800000. 3) (Fft.spectre ("./whee.wav"))
-	in Fft.queue_map (fun tab -> Array.sub tab 0 500) t
+open Params
+
+let queue =  Fft.queue_map (fun t -> Array.sub (Fft.array_of_res_norm_moy norme moy t) debut_tab_fft taille_tab_fft) (Fft.spectre ("./whee.wav") dt)
 
 let lgr = Queue.length queue
 
@@ -14,8 +14,8 @@ let n = Array.length res.(Array.length res -1)
 
 let notesreconnues = Queue.create ()
 
-
-let gammes =  [|"3"; "4"|] (*[|"3";"4";"5";"6"|] *)
+(*
+let gammes = [|"3"; "4"|] (*[|"3";"4";"5";"6"|] *)
 let notes = [|"c";"e";"g";"a"|](*[|"c";"d";"e";"f";"g";"a";"b"|]*)
 let nb_notes = Array.length notes
 let nb_simples = nb_notes * Array.length gammes
@@ -35,6 +35,7 @@ let couples =
 
 let nb_files = nb_simples + nb_couples
 let files = Array.concat [simples; couples]
+*)
 
 let _=
 	for i= 0 to lgr-1 do
