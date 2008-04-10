@@ -19,7 +19,8 @@ OCamlLibrary(BinaryParse,BinaryParse)
 OCamlLibrary(fft,fft)
 OCamlLibrary(affichage,affichage)
 OCamlLibrary(reseaux,reseaux)
-OCAML_LIBS = BinaryParse fft affichage reseaux
+OCamlLibrary(params,params)
+OCAML_LIBS = BinaryParse fft affichage reseaux params
 
 
 # Build the program
