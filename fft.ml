@@ -37,7 +37,7 @@ and riff_chunk=[
   input_string 4, "type", Some (type_of_riff_chunk);
 ]
 
-let creation_des_echantillons fichier=
+let creation_des_echantillons fichier dt=
 	let in_channel,parsed_header=header_parse (open_in_bin fichier) riff_chunk in 
   let moyenne_des_canaux alignement nombre_de_canaux=
 		let placeholder=ref 0. in
@@ -50,7 +50,7 @@ let creation_des_echantillons fichier=
 
   (* récupération des valeurs stockées dans la table de hachage et 
   * calcul de certaines autres à partir de celles-ci *)
-  let dt=1000 in (* millisecondes *)
+	(*let dt=250 in (* millisecondes *)*)
   let echantillonage=(valeur "sample_rate") in 
 	let alignement=valeur "block_align" in
   let nombre_de_canaux=(valeur "number_of_channels") in 
@@ -88,15 +88,15 @@ let bigarray1_map f b=
   done;
   b
 
-let cepstre fichier=
-  let echantillons_par_dt,queue_des_echantillons=creation_des_echantillons fichier in
+let cepstre fichier dt=
+  let echantillons_par_dt,queue_des_echantillons=creation_des_echantillons fichier dt in
   let spectres=queue_map (Fftw2.create Fftw2.forward echantillons_par_dt) queue_des_echantillons in
 (*  let spectre_en_amplitude=queue_map (bigarray1_map (function z -> z.Complex.re)) spectres in*)
   let phase=queue_map (bigarray1_map Complex.log) spectres in
   queue_map (Fftw2.create Fftw2.backward echantillons_par_dt) phase
 
-let spectre fichier=
-  let echantillons_par_dt,queue_des_echantillons=creation_des_echantillons fichier in
+let spectre fichier dt=
+  let echantillons_par_dt,queue_des_echantillons=creation_des_echantillons fichier dt in
   queue_map (Fftw2.create Fftw2.forward echantillons_par_dt) queue_des_echantillons
 
 let re_array_of_cplx_bigarray1_norm norm bigarray=
