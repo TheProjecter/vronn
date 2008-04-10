@@ -8,15 +8,15 @@ let queue =
 
 let lgr = Queue.length queue
 
-let res=load_struct "./results/notes_struct_all_200"
+let res=load_struct "./results/notes_struct_petit"
 
 let n = Array.length res.(Array.length res -1)
 
 let notesreconnues = Queue.create ()
 
 
-let gammes = (* [|"3"; "4"|] *)[|"3";"4";"5";"6"|]
-let notes = (*[|"c";"e";"g";"a"|]*)[|"c";"d";"e";"f";"g";"a";"b"|]
+let gammes =  [|"3"; "4"|] (*[|"3";"4";"5";"6"|] *)
+let notes = [|"c";"e";"g";"a"|](*[|"c";"d";"e";"f";"g";"a";"b"|]*)
 let nb_notes = Array.length notes
 let nb_simples = nb_notes * Array.length gammes
 let nb_couples = (* nb_simples * 2 - 3*) nb_simples * (nb_simples - 1) / 2
