@@ -18,7 +18,7 @@ exception Unknown_type
    programmation *)
 *)
 val creation_des_echantillons :
-  string ->
+  string -> int ->
   int * (Complex.t, Bigarray.complex64_elt, Bigarray.c_layout) Bigarray.Array1.t
   Queue.t
 
@@ -30,14 +30,14 @@ val bigarray1_map :
 
 (** Calcule le cepstre pour un fichier wav ; mauvais résultats pour l'instant *)
 val cepstre :
-  string ->
+  string -> int ->
   (Complex.t, Bigarray.complex64_elt, Bigarray.c_layout) Bigarray.Array1.t
   Queue.t
 
 (** Calcule le spectre pour un fichier wav ; bon résultats. Mais pas moyen de
  * savoir s'ils sont optimaux. *)
 val spectre :
-  string ->
+  string -> int ->
   (Complex.t, Bigarray.complex64_elt, Bigarray.c_layout) Bigarray.Array1.t
   Queue.t
 
