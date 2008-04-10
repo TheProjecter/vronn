@@ -1,4 +1,4 @@
-.PHONY: clean clean-results distclean
+.PHONY: clean clean-results distclean fft
 # Use the byte-code compiler
 BYTE_ENABLED = false
 NATIVE_ENABLED = true
@@ -25,7 +25,10 @@ OCAML_LIBS = BinaryParse fft affichage reseaux
 # Build the program
 OCamlProgram(run/notes, notes)
 OCamlProgram(run/reforme, reforme)
+OCamlProgram(run/regardelesbeauxcoefsdelafft, regardelesbeauxcoefsdelafft)
 .DEFAULT: run/notes.opt run/reforme.opt
+
+fft: run/regardelesbeauxcoefsdelafft.opt
 
 clean:
   rm -f *.o *.cm* *~ run/* *.a
