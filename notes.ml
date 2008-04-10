@@ -2,38 +2,17 @@ exception Trouve
 
 open Reseaux
 open Affichage
-let gammes = (*[|"3"; "4"|]*) [|"3";"4";"5";"6"|]
-let notes = (*[|"c";"e";"g";"a"|]*) [|"c";"d";"e";"f";"g";"a";"b"|]
-let nb_notes = Array.length notes
-let nb_simples = nb_notes * Array.length gammes
-let nb_couples = (*nb_simples * 2 - 3 *) nb_simples * (nb_simples - 1) / 2 
-let simples = Array.init nb_simples (fun i -> gammes.(i / nb_notes) ^ notes.(i mod nb_notes))
-let couples = 
-	let t= Array.make nb_couples "" and c = ref 0 in
-	(try 
-	for i = 0 to nb_simples-1 do
-		for j = i+1 to nb_simples-1 do
-			t.(!c) <- simples.(i) ^ "," ^ simples.(j); incr c; if !c >= nb_couples then failwith "fin"
-		done;
-	done;
-	with Failure "fin" -> ());
-	t
-
-let nb_files = nb_simples + nb_couples
-let files = Array.concat [simples; couples]
+open Params
 
 let lgr=Array.make nb_files 0
 let queues = Array.make nb_files (Queue.create ());;
 
 for i=0 to nb_files-1 do
-  queues.(i) <- Fft.queue_map (Fft.array_of_res_norm_moy 8800000. 3) (Fft.spectre ("./midge/"^files.(i)^".wav"));
-	queues.(i) <- Fft.queue_map (fun tab -> (*Array.map (fun x -> if x < 1. then 0. else if x < 10. then 0.5 else if x < 100. then 1. else 2.)*) (Array.sub tab 0 500)) queues.(i);
+  queues.(i) <- Fft.queue_map (fun tab -> Array.sub (Fft.array_of_res_norm_moy norme moy tab) debut_tab_fft taille_tab_fft) (Fft.spectre ("./midge/"^files.(i)^".wav") dt);
   lgr.(i) <- Queue.length queues.(i)
 done;;
 
 print_endline ("Done with the Fastest Fourier Transform in the West ! (" ^ (string_of_int nb_files) ^")" );;
-
-
 
 let compose elem str =
 	try
@@ -47,8 +26,8 @@ let compose elem str =
 let tri elems j = 
 	if List.mem j elems then 0.95 else 0.05
 	
-let res=generation [|160;80;40;nb_simples|] (Array.length (Queue.peek queues.(0)));;
-(* load_struct "./results/notes_struct";; *)
+let res=(*generation [|(*160;*)80;40;nb_simples|] (Array.length (Queue.peek queues.(0)));;*)
+ load_struct "./results/notes_struct";;
 
 let tab_couples=Array.make (Array.fold_left (fun x y -> x+y) 0 lgr) ([||],[||]);;
 let j=ref 0 in
