@@ -1,12 +1,14 @@
-let dt = 250
-let moy = 2
+let reload_res = false
+let progressive_training = true
+let dt = 50
+let moy = 1
 let norme = 8800000.
 let debut_tab_fft= 0
-let taille_tab_fft= 300
+let taille_tab_fft= 150
 
 
-let gammes = [|"3"; "4"|] (* [|"3";"4";"5";"6"|]*)
-let notes = [|"c";"e";"g";"a"|](* [|"c";"d";"e";"f";"g";"a";"b"|]*)
+let gammes = (* [|"3";"4"|] *) [|"3";"4";"5";"6"|]
+let notes = (*[|"c";"e";"g";"a"|]*)  [|"c";"d";"e";"f";"g";"a";"b"|]
 let nb_notes = Array.length notes
 let nb_simples = nb_notes * Array.length gammes
 let nb_couples = (*nb_simples * 2 - 3 *) nb_simples * (nb_simples - 1) / 2 
@@ -24,3 +26,5 @@ let couples =
 
 let nb_files = nb_simples + nb_couples
 let files = Array.concat [simples; couples]
+
+let taille_res = [|80;40;nb_simples|]

@@ -1,6 +1,6 @@
 open Reseaux
 
-let seuil = 0.5
+let seuil = 0.3
 
 open Params
 
@@ -8,7 +8,7 @@ let queue =  Fft.queue_map (fun t -> Array.sub (Fft.array_of_res_norm_moy norme 
 
 let lgr = Queue.length queue
 
-let res=load_struct "./results/notes_struct_petit"
+let res=load_struct "./results/notes_struct"
 
 let n = Array.length res.(Array.length res -1)
 
