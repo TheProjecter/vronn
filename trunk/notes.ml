@@ -26,10 +26,12 @@ let compose elem str =
 let tri elems j = 
 	if List.mem j elems then 0.95 else 0.05
 	
-let res=(*generation [|(*160;*)80;40;nb_simples|] (Array.length (Queue.peek queues.(0)));;*)
- load_struct "./results/notes_struct";;
+let res = 
+	if reload_res then load_struct "./results/notes_struct"
+	else generation taille_res (Array.length (Queue.peek queues.(0)));;
 
-let tab_couples=Array.make (Array.fold_left (fun x y -> x+y) 0 lgr) ([||],[||]);;
+let tab_couples=Array.make (Array.fold_left (+) 0 lgr) ([||],[||]);;
+
 let j=ref 0 in
 for i=0 to nb_files-1 do
 	let fin = !j + lgr.(i) in
@@ -50,12 +52,21 @@ for i=0 to nb_files-1 do
 		done);
 done;;
 
-let tmp=super_train_log_eta res tab_couples 0.01 (6000);;
 
-let (_,l2)=tmp in if List.length l2 < 800 then affiche "./results/notes_erreur" (List.rev l2) else Printf.printf "Trop d'erreurs à afficher...\n";;
-
+let tcio = Unix.tcgetattr Unix.stdin;;
+try
+	Unix.tcsetattr Unix.stdin  Unix.TCSADRAIN ({tcio with Unix.c_vmin=1; Unix.c_icanon=false});
+	let l2 = 
+		if progressive_training then (
+			let a=ref [] in
+			try for nentrainement = 2 to nb_files do
+				a:=!a@ (snd (super_train_log_eta res (Array.sub tab_couples 0 (Array.fold_left (+) 0 (Array.sub lgr 0 nentrainement))) (0.02/.(float_of_int nentrainement)) 6000 0.4));
+			done; !a
+			with Sys.Break -> !a)
+		else snd (super_train_log_eta res tab_couples 0.005 6000 0.2)
+	in if List.length l2 < 800 then affiche "./results/notes_erreur" (List.rev l2) else Printf.printf "Trop d'erreurs à afficher...\n"
+with |z -> Unix.tcsetattr Unix.stdin Unix.TCSADRAIN tcio; raise z;;
 (* test res tab_couples;;*)
 
-Printf.printf "Erreur %f \n\n" (super_erreur res tab_couples);;
 
 save_struct res "./results/notes_struct";;

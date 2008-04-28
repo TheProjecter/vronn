@@ -172,27 +172,19 @@ let super_erreur res tab_couples (* valable pour tout type de reseau*)=
 	!erreur2 /. (float_of_int n);
 ;;
 
-let super_train_log_eta (res:reseau) tab_couples eta nb_test_max=
+let super_train_log_eta (res:reseau) tab_couples eta nb_test_max precision =
   let pas=ref eta in
   let mistake=ref (super_erreur res tab_couples) in
   let last_erreur=ref !mistake in
-  let i=ref 0 in
+	let i=ref 0 in
   let go_on=ref true in
   let l1,l2=ref [],ref [] in
   let saut=4000 in
   let log_c=open_out_bin "./results/pour_gnuplot.txt" in
   Sys.catch_break true;
   try
-    while !go_on && !last_erreur > 0.1 (*ceci est la borne sup des erreurs acceptées*) && !i < nb_test_max do
+    while !go_on && !last_erreur > precision (*ceci est la borne sup des erreurs acceptées*) && !i < nb_test_max do
       Printf.printf "%.16f\n" (!mistake);
-      entrainement res tab_couples !pas (saut);
-      mistake := super_erreur res tab_couples;
-      Printf.fprintf log_c "%d %f\n" !i !mistake;
-      (match !i mod 4 with 0->Printf.printf "-" |1->Printf.printf "\\" | 2->Printf.printf "|" | _->Printf.printf "/" );
-      l1:=(!i)::(!l1);
-      l2:=(!mistake)::(!l2);
-      (*if abs (!mistake -. !last_erreur) <0.0000001 then anti_poids_nul res;*)
-      (*go_on := abs (!mistake -. !last_erreur) >0.00001;(* si plus de modif arrete toi*)*)
 			(try while true do
 					let changepas,_,_=Unix.select [Unix.stdin] [] [] 0. in
 					match changepas with 
@@ -202,6 +194,14 @@ let super_train_log_eta (res:reseau) tab_couples eta nb_test_max=
 						failwith "test";
 			done; with Failure "test"-> ());
       Printf.printf "Le pas est %f\n" !pas;
+      entrainement res tab_couples !pas (saut);
+      mistake := super_erreur res tab_couples;
+      Printf.fprintf log_c "%d %f\n" !i !mistake;
+      (*(match !i mod 4 with 0->Printf.printf "-" |1->Printf.printf "\\" | 2->Printf.printf "|" | _->Printf.printf "/" );*)
+      l1:=(!i)::(!l1);
+      l2:=(!mistake)::(!l2);
+      (*if abs (!mistake -. !last_erreur) <0.0000001 then anti_poids_nul res;*)
+      (*go_on := abs (!mistake -. !last_erreur) >0.00001;(* si plus de modif arrete toi*)*)
       incr i;
       last_erreur := super_erreur res tab_couples;
       flush stdout;
