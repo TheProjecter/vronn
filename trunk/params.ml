@@ -4,7 +4,8 @@ let dt = 50
 let moy = 1
 let norme = 8800000.
 let debut_tab_fft= 0
-let taille_tab_fft= 150
+let taille_tab_fft= 80
+let div_sample_per_file = 2
 
 
 let gammes = (* [|"3";"4"|] *) [|"3";"4";"5";"6"|]
