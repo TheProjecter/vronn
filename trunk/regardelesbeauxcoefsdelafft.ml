@@ -31,6 +31,6 @@ done;;
 for i= 0 to 0 do
 (*print_endline files.(i+1);*)
 	let count = ref 1 in
-	Queue.iter (fun tab -> let outchan=open_out ("gnuplot" ^ (string_of_int !count)) in Array.iteri (fun j x -> Printf.fprintf outchan"%i %10f\n" j x) tab; close_out outchan; incr count) queues.(i);
+	Queue.iter (fun tab -> let outchan=open_out ("gnuplot/" ^ (string_of_int !count)) in Array.iteri (fun j x -> Printf.fprintf outchan"%i %10f\n" j x) tab; close_out outchan; incr count) queues.(i);
 	print_newline ();
 done
