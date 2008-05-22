@@ -2,6 +2,8 @@ Gc.set {(Gc.get()) with Gc.minor_heap_size=200000};
 
 Random.init (int_of_float (Unix.time ()));
 
+Sys.catch_break true;
+
 type neurone=
   {poids: float array; mutable activation:float; mutable sortie:float;mutable sensib: float}
 and reseau=neurone array array
@@ -11,10 +13,7 @@ let sigmoide =fun x->1./. (1. +.exp (-.x))
 let dsigm x=
   let exp_moins_x=exp (-.x) in
   exp_moins_x /. (1. +. exp_moins_x) ** 2.
-let printf_tab tab=
-  for i=0 to Array.length tab -1 do Printf.printf "%f " tab.(i) done;
-  Printf.printf "\n"
-let abs x=
+let absf x=
   if x>0. then x else -.x;;
 
 
@@ -26,7 +25,6 @@ let propagation entree (res:reseau)=
       t:=!t +. (res.(0).(neur).poids.(i) *. entree.(i));
     done;
     res.(0).(neur).activation <- !t -. res.(0).(neur).poids.(Array.length entree);
-      (* rajout du biais dans la premiere couche *)
     res.(0).(neur).sortie <- sigmoide res.(0).(neur).activation
   done;
   for couche=1 to m-1 do
@@ -39,7 +37,6 @@ let propagation entree (res:reseau)=
       done;
       res.(couche).(neur).activation <- !t -.
         res.(couche).(neur).poids.(Array.length res.(couche_moins_un));
-        (*rajout du biais dans la couche*)
       res.(couche).(neur).sortie <- sigmoide res.(couche).(neur).activation
     done
   done
@@ -92,22 +89,21 @@ let calcul_sensib (res:reseau) entree sortie eta=
         somme := !somme +. (previouslayer.(k).sensib *. previouslayer.(k).poids.(neur))
       done;
       res.(couche).(neur).sensib <- (dsigm res.(couche).(neur).activation) *. !somme;
-      for k=0 to Array.length previouslayer -1 do (* modifie les poids de la couche*)
+      for k=0 to Array.length previouslayer -1 do
 				let poids = previouslayer.(k).poids in
         let t=eta *. previouslayer.(k).sensib in
         poids.(neur) <- poids.(neur) +. (t *. res.(couche).(neur).sortie);
         poids.(Array.length res.(couche)) <-
-          poids.(Array.length res.(couche)) -. t (*mise a jour du biais qui ne depend que de la sensib*);
+          poids.(Array.length res.(couche)) -. t;
       done;
     done;
   done;
-  (*on modifie la premiere couche; !couche=-1*)
   for input=0 to Array.length entree-1 do
 		let firstlayer = res.(0) in
     for k=0 to Array.length firstlayer -1 do
       let t=eta *. firstlayer.(k).sensib in
       firstlayer.(k).poids.(input) <- firstlayer.(k).poids.(input) +. (t *. entree.(input) );
-      firstlayer.(k).poids.(Array.length entree) <-firstlayer.(k).poids.(Array.length entree) -. t (*mise a jour du biais qui ne depend que de la sensib*);
+      firstlayer.(k).poids.(Array.length entree) <-firstlayer.(k).poids.(Array.length entree) -. t;
     done;
   done
 ;;
@@ -164,7 +160,7 @@ let super_erreur res tab_couples (* valable pour tout type de reseau*)=
 		d := snd tab_couples.(i);
 		propagation !p res;
 		for j=0 to Array.length (res.(long_res -1)) -1 do
-			let tmp= abs (!d.(j)-. res.(long_res -1).(j).sortie)  in
+			let tmp= absf (!d.(j)-. res.(long_res -1).(j).sortie)  in
 			erreur := !erreur +. (tmp *. tmp);
 		done;
 		erreur2:=!erreur2 +. sqrt (!erreur);
@@ -177,13 +173,11 @@ let super_train_log_eta (res:reseau) tab_couples eta nb_test_max precision =
   let mistake=ref (super_erreur res tab_couples) in
   let last_erreur=ref !mistake in
 	let i=ref 0 in
-  let go_on=ref true in
   let l1,l2=ref [],ref [] in
   let saut=4000 in
   let log_c=open_out_bin "./results/pour_gnuplot.txt" in
-  Sys.catch_break true;
   try
-    while !go_on && !last_erreur > precision (*ceci est la borne sup des erreurs acceptées*) && !i < nb_test_max do
+    while !last_erreur > precision (*ceci est la borne sup des erreurs acceptées*) && !i < nb_test_max do
       Printf.printf "%.16f\n" (!mistake);
 			(try while true do
 					let changepas,_,_=Unix.select [Unix.stdin] [] [] 0. in
@@ -194,16 +188,13 @@ let super_train_log_eta (res:reseau) tab_couples eta nb_test_max precision =
 						failwith "test";
 			done; with Failure "test"-> ());
       Printf.printf "Le pas est %f\n" !pas;
+			last_erreur := !mistake;
       entrainement res tab_couples !pas (saut);
-      mistake := super_erreur res tab_couples;
+			mistake := super_erreur res tab_couples;
       Printf.fprintf log_c "%d %f\n" !i !mistake;
-      (*(match !i mod 4 with 0->Printf.printf "-" |1->Printf.printf "\\" | 2->Printf.printf "|" | _->Printf.printf "/" );*)
       l1:=(!i)::(!l1);
       l2:=(!mistake)::(!l2);
-      (*if abs (!mistake -. !last_erreur) <0.0000001 then anti_poids_nul res;*)
-      (*go_on := abs (!mistake -. !last_erreur) >0.00001;(* si plus de modif arrete toi*)*)
       incr i;
-      last_erreur := super_erreur res tab_couples;
       flush stdout;
     done;
     Printf.printf "%.16f\n" (!last_erreur); Printf.printf "Le pas est %f\n" !pas;
@@ -274,6 +265,7 @@ let sortie reseau =
 	sortie
 ;;		
 
+(*
 type hyper_reseau = {nom: string; reseau: reseau; test: (float array -> int) ;suite: hyper_reseau array};;
 
 let rec hpropa {nom=nom; reseau=reseau; test=test; suite=suite} entrees noms=
@@ -291,3 +283,4 @@ let rec hgen (nom,taille,test,suite) taille_entree =
 	{nom=nom; reseau=(generation taille taille_entree); test=test; suite=suite_res}
 ;;
 
+*)
