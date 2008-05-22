@@ -66,7 +66,7 @@ try
 			let a=ref [] in
 			try let nentrainement=ref 2 in
 			while !nentrainement < nb_files do
-				a:=!a@ (snd (super_train_log_eta res (Array.sub tab_couples 0 (Array.fold_left (+) 0 (Array.sub lgr 0 !nentrainement))) (0.02/.(float_of_int !nentrainement)) 6000 0.5));
+				a:=!a@ (snd (super_train_log_eta res (Array.sub tab_couples 0 (Array.fold_left (+) 0 (Array.sub lgr 0 !nentrainement))) (0.02) 6000 0.5));
 				nentrainement:=!nentrainement+nb_files/4
 			done;
 			a:=!a@(snd (super_train_log_eta res tab_couples 0.001 6000 0.4));

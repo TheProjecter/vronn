@@ -1,12 +1,14 @@
 open Reseaux
 
+let seuil = 0.3
+
 open Params
 
 let queue =  Fft.queue_map (fun t -> Array.sub (Fft.array_of_res_norm_moy norme moy t) debut_tab_fft taille_tab_fft) (Fft.spectre ("./whee.wav") dt)
 
 let lgr = Queue.length queue
 
-let res=load_struct "./results/notes_struct"
+let res=load_struct "./results/notes_struct_big"
 
 let n = Array.length res.(Array.length res -1)
 
@@ -44,4 +46,4 @@ let _=
 		Queue.push !lst notesreconnues
 	done;
 
-Queue.iter (fun x-> List.iter (fun (s,i) -> Printf.printf "%s : %f, " s i) (List.rev x); print_newline()) notesreconnues
+Queue.iter (fun x-> List.iter (fun (s,i) -> Printf.printf "%s : %f, " s i) (List.rev (List.sort (fun (_,y1) (_,y2) -> compare y1 y2) x)); print_newline()) notesreconnues

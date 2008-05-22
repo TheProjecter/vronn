@@ -1,6 +1,6 @@
 
-opt: BinaryParse.cmxa
-	ocamlopt.opt -unsafe -ffast-math -inline 2 unix.cmxa -rectypes BinaryParse.cmxa bigarray.cmxa -I +site-lib/fftw2 fftw2.cmxa -cclib -lfftw -cclib -lrfftw -cclib -lm fft.ml -I +camlimages ci_core.cmxa graphics.cmxa ci_graphics.cmxa ci_png.cmxa affichage.ml ajourbiais.ml alphabet.ml -o run/alphabet
+opt: BinaryParse.cmxa fft.cmi
+	ocamlopt.opt -unsafe -ffast-math -inline 2 unix.cmxa -rectypes BinaryParse.cmxa bigarray.cmxa -I +site-lib/fftw2 fftw2.cmxa -cclib -lfftw -cclib -lrfftw -cclib -lm fft.ml -I +camlimages ci_core.cmxa graphics.cmxa ci_graphics.cmxa ci_png.cmxa affichage.ml reseaux.ml params.ml notes.ml -o run/notes
 
 %.cmi:
 	ocamlopt.opt -rectypes -c $*.mli -o $@
@@ -15,7 +15,7 @@ fft.out: BinaryParse.cmxa
 	ocamlopt.opt -rectypes BinaryParse.cmxa bigarray.cmxa -I +site-lib/fftw2 fftw2.cmxa -cclib -lfftw -cclib -lrfftw -cclib -lm fft.ml -o fft.out
 
 %.ml: BinaryParse.cmxa fft.cmi
-	ocamlopt.opt -unsafe -ffast-math -inline 2 unix.cmxa -rectypes BinaryParse.cmxa bigarray.cmxa -I +site-lib/fftw2 fftw2.cmxa -cclib -lfftw -cclib -lrfftw -cclib -lm fft.ml -I +camlimages ci_core.cmxa graphics.cmxa ci_graphics.cmxa ci_png.cmxa affichage.ml reseaux.ml $@ -o run/$*
+	ocamlopt.opt -unsafe -ffast-math -inline 2 unix.cmxa -rectypes BinaryParse.cmxa bigarray.cmxa -I +site-lib/fftw2 fftw2.cmxa -cclib -lfftw -cclib -lrfftw -cclib -lm fft.ml -I +camlimages ci_core.cmxa graphics.cmxa ci_graphics.cmxa ci_png.cmxa affichage.ml reseaux.ml params.ml $@ -o run/$*
 
 clean:
 	rm -f *.o *.cm* *~ run/* *.a
