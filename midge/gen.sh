@@ -5,9 +5,9 @@ gmax=$((${#gamme[@]}-1))
 nmax=$((${#note[@]}-1))
 
 if [[ "$1" = "1" ]]; then 
-		for g1 in `seq 0 $((${#gamme[@]}-1))`; do
-				for n1 in `seq 0 $((${#note[@]}-1))`; do
-						midge -o ${gamme[$g1]}${note[$n1]}.mid <<EOF
+  for g1 in `seq 0 $((${#gamme[@]}-1))`; do
+    for n1 in `seq 0 $((${#note[@]}-1))`; do
+      midge -o `dirname $0`/${gamme[$g1]}${note[$n1]}.mid <<EOF
 @head {
 	\$time_sig 4/4
 	\$tempo 80
@@ -24,18 +24,15 @@ if [[ "$1" = "1" ]]; then
 }
 EOF
 			
-						timidity -Ow -o ${gamme[$g1]}${note[$n1]}.wav ${gamme[$g1]}${note[$n1]}.mid
-
-				done
-		done
+      timidity -Ow -o `dirname $0`/${gamme[$g1]}${note[$n1]}.wav `dirname $0`/${gamme[$g1]}${note[$n1]}.mid
+    done
+  done
 elif [[ "$1" = "2" ]]; then
-    for g1 in `seq 0 $gmax`; do
+  for g1 in `seq 0 $gmax`; do
     for n1 in `seq 0 $nmax`; do
-				for g2 in `seq $g1 $gmax`; do
-				for n2 in `seq $(if [[ "$g1" = "$g2" ]]; then expr $n1 + 1; else echo 0; fi) $nmax`; do
-
-
-						midge -o ${gamme[$g1]}${note[$n1]},${gamme[$g2]}${note[$n2]}.mid <<EOF
+      for g2 in `seq $g1 $gmax`; do
+	for n2 in `seq $(if [[ "$g1" = "$g2" ]]; then expr $n1 + 1; else echo 0; fi) $nmax`; do
+	  midge -o `dirname $0`/${gamme[$g1]}${note[$n1]},${gamme[$g2]}${note[$n2]}.mid <<EOF
 @head {
 	\$time_sig 4/4
 	\$tempo 80
@@ -52,10 +49,10 @@ elif [[ "$1" = "2" ]]; then
 }
 EOF
 			
-						timidity -Ow -o ${gamme[$g1]}${note[$n1]},${gamme[$g2]}${note[$n2]}.wav ${gamme[$g1]}${note[$n1]},${gamme[$g2]}${note[$n2]}.mid
+	  timidity -Ow -o `dirname $0`/${gamme[$g1]}${note[$n1]},${gamme[$g2]}${note[$n2]}.wav `dirname $0`/${gamme[$g1]}${note[$n1]},${gamme[$g2]}${note[$n2]}.mid
 
-    		done
-				done
-		done
-		done
-else echo "blabla 1 ou 2"; fi
+	done
+      done
+    done
+  done
+else echo "Paramètre : 1 pour \"${note[$n1]}${gamme[$g1]}\" ou 2 pour \"${note[$n1]}${gamme[$g1]} ${note[$n2]}${gamme[$g2]}\""; fi
