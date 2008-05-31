@@ -1,0 +1,17 @@
+.PHONY: clean clean-results distclean fft
+# Use the byte-code compiler
+
+
+OCamlLibrary(BinaryParse,BinaryParse)
+OCamlLibrary(fft,fft)
+OCamlLibrary(affichage,affichage)
+OCamlLibrary(reseaux,reseaux)
+OCamlLibrary(params,params)
+
+
+# Build the program
+OCamlProgram(../run/notes,notes)
+OCamlProgram(../run/reforme,reforme)
+OCamlProgram(../run/regardelesbeauxcoefsdelafft,regardelesbeauxcoefsdelafft)
+.DEFAULT: ../run/notes.opt ../run/reforme.opt ../run/regardelesbeauxcoefsdelafft.opt
+
