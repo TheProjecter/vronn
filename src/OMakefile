@@ -1,6 +1,4 @@
 .PHONY: clean clean-results distclean fft
-# Use the byte-code compiler
-
 
 OCamlLibrary(BinaryParse,BinaryParse)
 OCamlLibrary(fft,fft)
