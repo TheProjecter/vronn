@@ -1,43 +1,29 @@
+.SUBDIRS: src
 .PHONY: clean clean-results distclean fft
+#.DEFAULT: notes reforme
 # Use the byte-code compiler
-BYTE_ENABLED = false
-NATIVE_ENABLED = true
 
-OCAMLFLAGS += -rectypes -unsafe
-OCAMLOPTFLAGS += -ffast-math -inline 2
 
-USE_OCAMLFIND = true
-
-OCAMLPACKS[] =
-	unix
-	graphics
-	fftw
-	fftw2
-	camlimages
-
-OCamlLibrary(BinaryParse,BinaryParse)
-OCamlLibrary(fft,fft)
-OCamlLibrary(affichage,affichage)
-OCamlLibrary(reseaux,reseaux)
-OCamlLibrary(params,params)
-OCAML_LIBS = BinaryParse fft affichage reseaux params
+#OCamlLibrary(BinaryParse,src/BinaryParse)
+#OCamlLibrary(fft,src/fft)
+#OCamlLibrary(affichage,src/affichage)
+#OCamlLibrary(reseaux,src/reseaux)
+#OCamlLibrary(params,src/params)
 
 
 # Build the program
-OCamlProgram(run/notes, notes)
-OCamlProgram(run/reforme, reforme)
-OCamlProgram(run/regardelesbeauxcoefsdelafft, regardelesbeauxcoefsdelafft)
-.DEFAULT: run/notes.opt run/reforme.opt
-
-fft: run/regardelesbeauxcoefsdelafft.opt
+#OCamlProgram(run/notes,src/notes)
+#OCamlProgram(run/reforme,src/reforme)
+#OCamlProgram(run/regardelesbeauxcoefsdelafft,src/regardelesbeauxcoefsdelafft)
+#.DEFAULT: run/notes.opt run/reforme.opt
 
 clean:
-  rm -f *.o *.cm* *~ run/* *.a
+  rm -f *~ run/* src/*.o src/*.cm* src/*~ src/*.a
 
 clean-results:
-  rm -f resultsonth2.png results/*
+  rm -f results/*
 
 distclean: clean clean-results
-  rm -f fft.out struct_sontheorique2
+  rm -f src/fft.out src/*.omc *.omc
 
 maintainerclean: distclean

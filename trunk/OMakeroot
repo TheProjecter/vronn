@@ -39,6 +39,23 @@ open build/OCaml
 #
 DefineCommandVars()
 
+BYTE_ENABLED = false
+NATIVE_ENABLED = true
+
+OCAMLFLAGS += -rectypes -unsafe
+OCAMLOPTFLAGS += -ffast-math -inline 2
+
+USE_OCAMLFIND = true
+
+OCAMLPACKS[] =
+	unix
+	graphics
+	fftw
+	fftw2
+	camlimages
+
+OCAML_LIBS = BinaryParse fft affichage reseaux params
+
 #
 # Include the OMakefile in this directory.
 #
