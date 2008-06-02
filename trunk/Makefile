@@ -1,6 +1,9 @@
 opt:
 	(cd src; ${MAKE} $@)
 
+wav:
+	./midge/gen.sh 1 && ./midge/gen.sh 2
+
 %:
 	(cd src; ${MAKE} $@)
 

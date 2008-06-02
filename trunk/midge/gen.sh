@@ -24,7 +24,7 @@ if [[ "$1" = "1" ]]; then
 }
 EOF
 			
-      timidity -Ow -o `dirname $0`/${gamme[$g1]}${note[$n1]}.wav `dirname $0`/${gamme[$g1]}${note[$n1]}.mid
+      timidity -Ow `dirname $0`/${gamme[$g1]}${note[$n1]}.mid
     done
   done
 elif [[ "$1" = "2" ]]; then
@@ -49,10 +49,11 @@ elif [[ "$1" = "2" ]]; then
 }
 EOF
 			
-	  timidity -Ow -o `dirname $0`/${gamme[$g1]}${note[$n1]},${gamme[$g2]}${note[$n2]}.wav `dirname $0`/${gamme[$g1]}${note[$n1]},${gamme[$g2]}${note[$n2]}.mid
+	  timidity -Ow `dirname $0`/${gamme[$g1]}${note[$n1]},${gamme[$g2]}${note[$n2]}.mid
 
 	done
       done
     done
   done
-else echo "Paramètre : 1 pour \"${note[$n1]}${gamme[$g1]}\" ou 2 pour \"${note[$n1]}${gamme[$g1]} ${note[$n2]}${gamme[$g2]}\""; fi
+else echo "Usage : $0 X, où X est 0 ou 1 :
+0 génère les notes isolées et 1 génère les couples"; fi

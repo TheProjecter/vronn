@@ -6,7 +6,7 @@
 @body {
 
 		@channel 1 {
-		$patch 74 # flute
+		$patch 60 #74 # flute
 		$length 4
 
 		( a3 e4 )

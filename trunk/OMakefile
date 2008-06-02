@@ -1,5 +1,8 @@
 .SUBDIRS: src
-.PHONY: clean clean-results distclean fft
+.PHONY: clean clean-results distclean fft wav
+
+wav:
+	./midge/gen.sh 1 && ./midge/gen.sh 2
 
 clean:
   rm -f *~ run/* src/*.o src/*.cm* src/*~ src/*.a
