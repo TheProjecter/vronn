@@ -9,7 +9,7 @@ let queues = Array.make nb_files (Queue.create ());;
 
 for i=0 to nb_files-1 do
   queues.(i) <- Fft.queue_map (fun tab -> Array.sub (Fft.array_of_res_norm_moy
-    norme moy tab) debut_tab_fft taille_tab_fft) (Fft.spectre ("../midge/"^files.(i)^".wav") dt);
+    norme moy tab) debut_tab_fft taille_tab_fft) (Fft.spectre ("midge/"^files.(i)^".wav") dt);
 	let tmp = Queue.create () in
 	for j=0 to Queue.length queues.(i) / div_sample_per_file do
 		Queue.push (Queue.pop queues.(i)) tmp
