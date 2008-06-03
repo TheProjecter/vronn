@@ -4,9 +4,9 @@ type value=S of string | I of int
 and gen_fct= ((string, value) Hashtbl.t -> ((in_channel -> value) * string * gen_fct option) list)
 
 type bc = {
-	ic : in_channel;
-	mutable nbits : int;
-	mutable bits : int;
+  ic : in_channel;
+  mutable nbits : int;
+  mutable bits : int;
 }
 
 (* several reading functions *)
@@ -26,7 +26,7 @@ let little_endian_read_ui8n n ic=
     |1->I (input_byte ic)
     |2->I (little_endian_read_ui16 ic)
     |4->I (little_endian_read_ui32 ic)
-    |n->raise  (A_implementer ("read_ui8*"^(string_of_int n)^"\n"))
+    |n->raise (A_implementer ("read_ui8*"^(string_of_int n)^"\n"))
 
 let big_endian_read_ui16 in_channel=
   let premiere_partie=input_byte in_channel in
@@ -43,7 +43,7 @@ let big_endian_read_ui8n n ic=
     |1->I (input_byte ic)
     |2->I (big_endian_read_ui16 ic)
     |4->I (big_endian_read_ui32 ic)
-    |n->raise  (A_implementer ("read_ui8"^(string_of_int n)^"\n"))
+    |n->raise (A_implementer ("read_ui8"^(string_of_int n)^"\n"))
 
 let rec little_endian_read_bits b n=
   if b.nbits >= n then
@@ -99,7 +99,7 @@ let input_string n in_channel=
 (* header parse *)
 
 let header_parse in_channel lst=
-  let header_hashtbl = Hashtbl.create 30  in
+  let header_hashtbl = Hashtbl.create 30 in
   let rec header_parseRC=function
     |(read_function, field_name, generating_function)::q-> (
       let field_value=read_function in_channel in

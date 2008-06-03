@@ -15,11 +15,11 @@ with
 
 Printf.printf "erreur : %f \n poids : " (super_erreur res tab_couples);
 for i=0 to 1 do
-	for j=0 to Array.length res.(i) -1 do
-		for k=0 to Array.length res.(i).(j).poids -1 do
-			Printf.printf "%f," res.(i).(j).poids.(k)
-		done;
-		Printf.printf ";";
-	done;
-	Printf.printf "\n";
+  for j=0 to Array.length res.(i) -1 do
+    for k=0 to Array.length res.(i).(j).poids -1 do
+      Printf.printf "%f," res.(i).(j).poids.(k)
+    done;
+    Printf.printf ";";
+  done;
+  Printf.printf "\n";
 done

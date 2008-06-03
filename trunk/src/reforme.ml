@@ -24,7 +24,7 @@ let simples = Array.init nb_simples (fun i -> gammes.(i / nb_notes) ^ notes.(i m
 let couples =
   let t= Array.make nb_couples "" and c = ref 0 in
   (try
-	for i = 0 to nb_simples-1 do
+  for i = 0 to nb_simples-1 do
     for j = i+1 to nb_simples-1 do
       t.(!c) <- simples.(i) ^ "," ^ simples.(j); incr c; if !c >= nb_couples then failwith "fin";
     done;
@@ -38,12 +38,12 @@ let files = Array.concat [simples; couples]
 *)
 
 let _=
-	for i= 0 to lgr-1 do
-		let t=propa (Queue.pop queue) res and lst = ref [] in
-		for j = 0 to n-1 do
-			if t.(j) > seuil then lst:=(files.(j),t.(j))::(!lst)
-		done;
-		Queue.push !lst notesreconnues
-	done;
+  for i= 0 to lgr-1 do
+    let t=propa (Queue.pop queue) res and lst = ref [] in
+    for j = 0 to n-1 do
+      if t.(j) > seuil then lst:=(files.(j),t.(j))::(!lst)
+    done;
+    Queue.push !lst notesreconnues
+  done;
 
 Queue.iter (fun x-> List.iter (fun (s,i) -> Printf.printf "%s : %f, " s i) (List.rev (List.sort (fun (_,y1) (_,y2) -> compare y1 y2) x)); print_newline()) notesreconnues

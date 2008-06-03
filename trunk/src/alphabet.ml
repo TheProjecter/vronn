@@ -18,17 +18,17 @@ let nb_tri = Array.length distrib;;
 let res=generation [|10;10;nb_tri|] 110;;
 let tri j k=
 (*fun int->float*)
-	let recherche str str2=
-		let i=ref 0 and go_on=ref true in
-		while !go_on && !i<(String.length str) - (String.length str2) do
-			if String.sub str !i (String.length str2)=str2 then go_on:=false;
-		incr i		
-		done;
-		not !go_on in
-	if k<nb_tri && k>0 
-		then if recherche files.(j) distrib.(k) then 0.95 else 0.05
-		else 0.05
-	
+  let recherche str str2=
+    let i=ref 0 and go_on=ref true in
+    while !go_on && !i<(String.length str) - (String.length str2) do
+      if String.sub str !i (String.length str2)=str2 then go_on:=false;
+    incr i    
+    done;
+    not !go_on in
+  if k<nb_tri && k>0 
+    then if recherche files.(j) distrib.(k) then 0.95 else 0.05
+    else 0.05
+  
 ;;
 
 
@@ -36,10 +36,10 @@ let tri j k=
 let tab_couples=Array.make (Array.fold_left (fun x y -> x+y) 0 lgr) ([||],[||]);;
 let j=ref 0 in
 for i=0 to nb_lettres-1 do
-	let fin = !j + lgr.(i) in
+  let fin = !j + lgr.(i) in
   while !j < fin do
    tab_couples.(!j) <- Queue.pop queues.(i),Array.init 28 (tri i);
-	 incr j
+   incr j
   done
 done;;
 
