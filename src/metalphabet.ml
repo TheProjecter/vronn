@@ -11,15 +11,15 @@ open Affichage
 
 let tab_couples=Array.make lgr ([||],[||]);;
 for i=0 to lgr_a-1 do
-	tab_couples.(i) <- Queue.pop queue_a,[|0.95; 0.1; 0.1|];
-	(*  ignore (Queue.pop queue); *)
+  tab_couples.(i) <- Queue.pop queue_a,[|0.95; 0.1; 0.1|];
+  (*  ignore (Queue.pop queue); *)
 done;
 for i=0 to lgr_b-1 do
-	tab_couples.(i+lgr_a) <- Queue.pop queue_b,[|0.1; 0.95; 0.1|];
-	(*  ignore (Queue.pop queue); *)
+  tab_couples.(i+lgr_a) <- Queue.pop queue_b,[|0.1; 0.95; 0.1|];
+  (*  ignore (Queue.pop queue); *)
 done;
 for i=0 to lgr_c-1 do
-	tab_couples.(i+lgr_a+lgr_b) <- Queue.pop queue_c,[|0.1; 0.1; 0.95|];
+  tab_couples.(i+lgr_a+lgr_b) <- Queue.pop queue_c,[|0.1; 0.1; 0.95|];
 done;;
 
 for i=1 to 15 do
@@ -29,7 +29,7 @@ for i=1 to 15 do
     result.(i-1).(j-1) <- super_erreur res tab_couples ;
     Printf.printf " --------------- WHEEEE ! %d, %d done -------------- \n\n\n" i j;
     Affichage.affiche ("./results/alphabet" ^ (string_of_int i) ^","^ (string_of_int j)) (List.rev l2);
-		save_struct res ("./results/alphabet" ^ (string_of_int i) ^","^ (string_of_int j) ^"_struct")
+    save_struct res ("./results/alphabet" ^ (string_of_int i) ^","^ (string_of_int j) ^"_struct")
   done
 done;;
 
@@ -42,7 +42,7 @@ for i=0 to 14 do
       begin
         min3 := !min2; min2:= !min1; min1 := (i+1,j+1,result.(i).(j))
       end
-		else if result.(i).(j) < troiz !min2 then  begin
+    else if result.(i).(j) < troiz !min2 then  begin
         min3 := !min2; min2:= (i+1,j+1,result.(i).(j))
     end else if result.(i).(j) < troiz !min3 then  begin
        min3:= (i+1,j+1,result.(i).(j))

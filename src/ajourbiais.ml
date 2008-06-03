@@ -108,36 +108,36 @@ let generation (nb_neurone_par_couche:int array) taille_entree=
 ;;
 
 let entrainement (reseau:reseau) tab_couples eta nb_test_max sigmoide=
-	let n=Array.length tab_couples  in 
-	let p1,d1=tab_couples.(0) in 
-	let p,d=ref p1,ref d1 in
-	for i=0 to nb_test_max do
-		p := fst tab_couples.(i mod n);
-		d := snd tab_couples.(i mod n);
-		propagation !p reseau sigmoide;
-		calcul_sensib reseau !p !d eta;
-	done
+  let n=Array.length tab_couples  in 
+  let p1,d1=tab_couples.(0) in 
+  let p,d=ref p1,ref d1 in
+  for i=0 to nb_test_max do
+    p := fst tab_couples.(i mod n);
+    d := snd tab_couples.(i mod n);
+    propagation !p reseau sigmoide;
+    calcul_sensib reseau !p !d eta;
+  done
 ;;
 
 let super_erreur res tab_couples (* valable pour tout type de reseau*)=
-	let p1,d1=tab_couples.(0) in 
-	let p,d=ref p1,ref d1 in
-	let n=Array.length tab_couples in
+  let p1,d1=tab_couples.(0) in 
+  let p,d=ref p1,ref d1 in
+  let n=Array.length tab_couples in
         let long_res=Array.length res in
-	let erreur =ref 0. in
-	let erreur2=ref 0. in
-	for i=0 to  n -1 do
-		erreur:=0.;
-		p := fst tab_couples.(i);
-		d := snd tab_couples.(i);
-		propagation !p res sigmoide;
-		for j=0 to Array.length (res.(long_res -1)) -1 do
-			let tmp= abs (!d.(j)-. res.(long_res -1).(j).sortie)  in
-			erreur := !erreur +. (tmp *. tmp);
-		done;
-		erreur2:=!erreur2 +. sqrt (!erreur);
-	done;
-	!erreur2 /. (float_of_int n);
+  let erreur =ref 0. in
+  let erreur2=ref 0. in
+  for i=0 to  n -1 do
+    erreur:=0.;
+    p := fst tab_couples.(i);
+    d := snd tab_couples.(i);
+    propagation !p res sigmoide;
+    for j=0 to Array.length (res.(long_res -1)) -1 do
+      let tmp= abs (!d.(j)-. res.(long_res -1).(j).sortie)  in
+      erreur := !erreur +. (tmp *. tmp);
+    done;
+    erreur2:=!erreur2 +. sqrt (!erreur);
+  done;
+  !erreur2 /. (float_of_int n);
 ;;
 
 (* anti_poids_nul n'est pas utilisé mais est présent en commentaire dans
@@ -177,14 +177,14 @@ let super_train_log_eta (res:reseau) tab_couples eta nb_test_max sigmoide=
       l2:=(!mistake)::(!l2);
       (*if abs (!mistake -. !last_erreur) <0.0000001 then anti_poids_nul res;*)
       (*go_on := abs (!mistake -. !last_erreur) >0.00001;(* si plus de modif arrete toi*)*)
-			(try while true do
-					let changepas,_,_=Unix.select [Unix.stdin] [] [] 0. in
-					match changepas with 
-					| something::_ -> let buf=String.make 1 ' ' in (ignore (Unix.read something buf 0 1); match buf.[0] with | '+' -> pas := 2. *. !pas | '-' -> pas := 0.5 *. !pas | _ -> ())
-					|[] -> let abs_diff_err = max (!mistake -. !last_erreur) (!last_erreur -. !mistake) in
-						pas:=max (min (!pas +. 0.000001 *. (0.01 /. abs_diff_err-. 100. *. abs_diff_err)) 0.05) 0.0000001;
-						failwith "test";
-			done; with Failure "test"-> ());
+      (try while true do
+          let changepas,_,_=Unix.select [Unix.stdin] [] [] 0. in
+          match changepas with 
+          | something::_ -> let buf=String.make 1 ' ' in (ignore (Unix.read something buf 0 1); match buf.[0] with | '+' -> pas := 2. *. !pas | '-' -> pas := 0.5 *. !pas | _ -> ())
+          |[] -> let abs_diff_err = max (!mistake -. !last_erreur) (!last_erreur -. !mistake) in
+            pas:=max (min (!pas +. 0.000001 *. (0.01 /. abs_diff_err-. 100. *. abs_diff_err)) 0.05) 0.0000001;
+            failwith "test";
+      done; with Failure "test"-> ());
       Printf.printf "Le pas est %f\n" !pas;
       incr i;
       last_erreur := super_erreur res tab_couples;
@@ -219,34 +219,34 @@ close_out fichier
 
 
 let load_struct file=
-	let in_channel=open_in file in
-	let read_int=function x -> int_of_string (input_line x) in
-	let read_float=function x -> float_of_string (input_line x) in
-	let nb_couche=read_int in_channel in
-	let new_neur taille nbre= 
-		begin 
-			let tmp=Array.make taille 0. in
-			{poids=tmp ;activation=0. ;sortie=0. ; sensib= 0.}
-		end in
-	let reseau=Array.make nb_couche [||] in
-	for couche=0 to nb_couche -1 do
-		reseau.(couche) <- 
-			begin 
-				let taille_couche=read_int in_channel in
-				let tmp = Array.make taille_couche (new_neur 0 1.) in
-				for neur=0 to taille_couche-1 do
-					let taille_prec=read_int in_channel in
-					tmp.(neur) <- new_neur (taille_prec) 1.;
-					for weight=0 to taille_prec-1 do
-						tmp.(neur).poids.(weight)<-read_float in_channel
-					done
-				done;
-				tmp
-			end;
-	done;
-	close_in in_channel;
-	Printf.printf "bien importe\n";
-	(reseau:reseau)
+  let in_channel=open_in file in
+  let read_int=function x -> int_of_string (input_line x) in
+  let read_float=function x -> float_of_string (input_line x) in
+  let nb_couche=read_int in_channel in
+  let new_neur taille nbre= 
+    begin 
+      let tmp=Array.make taille 0. in
+      {poids=tmp ;activation=0. ;sortie=0. ; sensib= 0.}
+    end in
+  let reseau=Array.make nb_couche [||] in
+  for couche=0 to nb_couche -1 do
+    reseau.(couche) <- 
+      begin 
+        let taille_couche=read_int in_channel in
+        let tmp = Array.make taille_couche (new_neur 0 1.) in
+        for neur=0 to taille_couche-1 do
+          let taille_prec=read_int in_channel in
+          tmp.(neur) <- new_neur (taille_prec) 1.;
+          for weight=0 to taille_prec-1 do
+            tmp.(neur).poids.(weight)<-read_float in_channel
+          done
+        done;
+        tmp
+      end;
+  done;
+  close_in in_channel;
+  Printf.printf "bien importe\n";
+  (reseau:reseau)
 ;;
 
 
@@ -281,34 +281,34 @@ let scan_int () = Scanf.scanf " %d" (fun x -> x)
 (*important !!*)
 
 (*di = oi(1-oi)(ci-oi)
-	cette formule vient d'une formule du calcul de la derivée dela sigmoide
-	cf http://www.grappa.univ-lille3.fr/polys/apprentissage/sortie005.html#toc12 *)
+  cette formule vient d'une formule du calcul de la derivée dela sigmoide
+  cf http://www.grappa.univ-lille3.fr/polys/apprentissage/sortie005.html#toc12 *)
 
 *)
 
 
 (*
 let test res tab_couples= (* !! valable seulement pour un neurone sur la couche de sortie*)
-	let p1,d1=tab_couples.(0) in 
-	let p,d=ref p1,ref d1 in
-	let n=Array.length tab_couples in
-	let m=Array.length res in
-	let bob=Array.make (Array.length res.(m-1) ) 0. in
-	for i=0 to  n -1 do
-		p := fst tab_couples.(i);
-		d := snd tab_couples.(i);
-		propagation !p res sigmoide;
-		for k=0 to Array.length res.(m -1)  -1 do
-			bob.(k) <- res.(m-1).(k).sortie
-		done;
-		Printf.printf "entrees        :";
-		printf_tab !p;
-		Printf.printf "sortie desiree :";
-		printf_tab !d;
-		Printf.printf "sortie reelles :";
-		printf_tab bob;
-		Printf.printf "\n----------------------------------\n";
-	done;
+  let p1,d1=tab_couples.(0) in 
+  let p,d=ref p1,ref d1 in
+  let n=Array.length tab_couples in
+  let m=Array.length res in
+  let bob=Array.make (Array.length res.(m-1) ) 0. in
+  for i=0 to  n -1 do
+    p := fst tab_couples.(i);
+    d := snd tab_couples.(i);
+    propagation !p res sigmoide;
+    for k=0 to Array.length res.(m -1)  -1 do
+      bob.(k) <- res.(m-1).(k).sortie
+    done;
+    Printf.printf "entrees        :";
+    printf_tab !p;
+    Printf.printf "sortie desiree :";
+    printf_tab !d;
+    Printf.printf "sortie reelles :";
+    printf_tab bob;
+    Printf.printf "\n----------------------------------\n";
+  done;
 ;;
 *)
 
@@ -317,7 +317,7 @@ let test res tab_couples= (* !! valable seulement pour un neurone sur la couche 
 let train (res:reseau) tab_couples eta nb_test_max sigmoide=
   let mistake=ref 0. in
   let i=ref 0 in
-  while !i<= 100 && !mistake <> (erreur res tab_couples) do	
+  while !i<= 100 && !mistake <> (erreur res tab_couples) do  
     mistake := erreur res tab_couples;
     Printf.printf "%f\n" (!mistake);
     entrainement res tab_couples eta (nb_test_max/100) sigmoide;
@@ -329,19 +329,19 @@ let train (res:reseau) tab_couples eta nb_test_max sigmoide=
 
 
 (*let erreur res tab_couples= (* !! valable seulement pour un neurone sur la couche de sortie*)
-	let abs x=
-		if x>0. then x else -.x in
-	let p1,d1=tab_couples.(0) in 
-	let p,d=ref p1,ref d1 in
-	let n=Array.length tab_couples in
-	let erreur =ref 0. in
-	for i=0 to  n -1 do
-		p := fst tab_couples.(i);
-		d := snd tab_couples.(i);
-		propagation !p res sigmoide;
-		erreur := !erreur +. (abs (!d.(0)-. res.(Array.length res -1).(0).sortie));
-	done;
-	!erreur /. (float_of_int n);
+  let abs x=
+    if x>0. then x else -.x in
+  let p1,d1=tab_couples.(0) in 
+  let p,d=ref p1,ref d1 in
+  let n=Array.length tab_couples in
+  let erreur =ref 0. in
+  for i=0 to  n -1 do
+    p := fst tab_couples.(i);
+    d := snd tab_couples.(i);
+    propagation !p res sigmoide;
+    erreur := !erreur +. (abs (!d.(0)-. res.(Array.length res -1).(0).sortie));
+  done;
+  !erreur /. (float_of_int n);
 ;;
 *)
 
