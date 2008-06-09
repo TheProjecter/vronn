@@ -15,7 +15,7 @@ Array.sort ordre files;;*)
 let queues = Array.make nbr (Queue.create ());;
 
 for i=0 to nbr-1 do 
-  queues.(i) <- Fft.queue_map (fun tab -> Array.sub (Fft.array_of_res_norm_moy norme moy tab) debut_tab_fft taille_tab_fft) (Fft.spectre ("./whee.wav") dt);
+  queues.(i) <- Fft.queue_map (fun tab -> Array.sub (Fft.array_of_res_norm_moy norme moy tab) debut_tab_fft taille_tab_fft) (Fft.cepstre ("./whee.wav") dt);
 done;;
 
 (* print_endline ("Done with the Fastest Fourier Transform in the West ! (1)" );; *)

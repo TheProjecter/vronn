@@ -9,7 +9,7 @@ let int_to_ascii_string i = String.make 1 (char_of_int i);;
 let files = Sys.readdir "alphabet2" ;;
 Array.sort compare files;
 for i=0 to nb_lettres-1 do
- queues.(i) <- Fft.queue_map (Fft.re_array_of_cplx_bigarray1_norm 8800000.) (Fft.spectre ("./alphabet2/"^files.(i+1)));
+ queues.(i) <- Fft.queue_map (Fft.re_array_of_cplx_bigarray1_norm 8800000.) (Fft.cepstre ("./alphabet2/"^files.(i+1)));
   lgr.(i) <- Queue.length queues.(i)
 done;;
 
