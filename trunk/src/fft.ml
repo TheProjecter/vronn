@@ -90,10 +90,11 @@ let bigarray1_map f b=
 
 let cepstre fichier dt=
   let echantillons_par_dt,queue_des_echantillons=creation_des_echantillons fichier dt in
-  let spectres=queue_map (Fftw2.create Fftw2.forward echantillons_par_dt) queue_des_echantillons in
+  let avec_log=queue_map log queue_des_echantillons in
+  queue_map (Fftw2.create Fftw2.forward echantillons_par_dt) avec_log
 (*  let spectre_en_amplitude=queue_map (bigarray1_map (function z -> z.Complex.re)) spectres in*)
-  let phase=queue_map (bigarray1_map Complex.log) spectres in
-  queue_map (Fftw2.create Fftw2.backward echantillons_par_dt) phase
+(*  let phase=queue_map (bigarray1_map Complex.log) spectres in 
+  queue_map (Fftw2.create Fftw2.backward echantillons_par_dt) phase *)
 
 let spectre fichier dt=
   let echantillons_par_dt,queue_des_echantillons=creation_des_echantillons fichier dt in

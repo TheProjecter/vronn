@@ -4,7 +4,7 @@ let seuil = 0.3
 
 open Params
 
-let queue =  Fft.queue_map (fun t -> Array.sub (Fft.array_of_res_norm_moy norme moy t) debut_tab_fft taille_tab_fft) (Fft.spectre ("./whee.wav") dt)
+let queue =  Fft.queue_map (fun t -> Array.sub (Fft.array_of_res_norm_moy norme moy t) debut_tab_fft taille_tab_fft) (Fft.cepstre ("./whee.wav") dt)
 
 let lgr = Queue.length queue
 
