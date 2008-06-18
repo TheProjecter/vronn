@@ -49,4 +49,4 @@ val re_array_of_cplx_bigarray1_norm :
 (** Transforme une Bigarray.Array1 en Array, en faisant la moyenne sur n 
  * valeurs et divisant le tout par le premier argument *)
 val array_of_res_norm_moy :
-	float -> int -> (Complex.t, 'a, 'b) Bigarray.Array1.t -> float array
+  float -> int -> (Complex.t, 'a, 'b) Bigarray.Array1.t -> float array
