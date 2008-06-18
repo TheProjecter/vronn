@@ -81,7 +81,7 @@ let rec big_endian_read_bits b n=
       b.bits <- k;
       b.nbits <- c;
       d
-    else begin			
+    else begin      
       b.bits <- (b.bits lsl 8) lor k;
       b.nbits <- b.nbits + 8;
       big_endian_read_bits b n;
