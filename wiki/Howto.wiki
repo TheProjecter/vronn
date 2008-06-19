@@ -1,0 +1,4 @@
+Pour essayer, il faut (sauf éditions mineures) de camlimages (il trace un graphique de l’évolution des erreurs), de FFTW2 (et non la dernière version, à cause des bindings ocaml), et des dits bindings ( ftp ://ftp.umh.ac.be/pub/ftp san/software/fftw2-0.2.tar.gz ).
+Les notes sont générées par le script ”midge/gen.sh”, donc il faut aussi midge et timidity...
+make génère l’executable run/notes, qui sert d’entrainement et enregistre le réseau dans results/notes struct, ainsi que run/reforme qui lit le wave ”whee.wav” et le traite avec ledit réseau.
+(par défaut, il y a une structure et le wav présent, donc pour essayer seulement cela la partie fftw suffit et il faut faire "make reforme")
