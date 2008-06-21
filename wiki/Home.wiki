@@ -3,7 +3,7 @@
 
 = Welcome here ! =
 
-No comments yet. 
+Nothing to see here, please contact us for more information.
 
 If you check the sources, you will see three single .ml files which are in fact two versions of the neural network itself. We will create separate working directories and expand the thing when we will start with the sound recognition process itself.
 
